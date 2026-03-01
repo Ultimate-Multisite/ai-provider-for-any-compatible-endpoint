@@ -3,7 +3,7 @@
  * Plugin Name: OpenAI-Compatible Connector
  * Plugin URI: https://github.com/Ultimate-Multisite/openai-compatible-connector
  * Description: Registers an AI Client provider for any OpenAI-compatible endpoint (Ollama, LM Studio, OpenRouter, etc.).
- * Requires at least: 7.0
+ * Requires at least: 6.9
  * Requires PHP: 7.4
  * Version: 1.0.0
  * Author: Ultimate Multisite Community
