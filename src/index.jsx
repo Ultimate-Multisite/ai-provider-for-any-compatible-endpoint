@@ -18,6 +18,7 @@ const {
 	TextControl,
 	SelectControl,
 	Spinner,
+	__experimentalNumberControl: NumberControl,
 	__experimentalHStack: HStack,
 	__experimentalVStack: VStack,
 } = wp.components;
@@ -91,6 +92,8 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 	const [ isLoadingModels, setIsLoadingModels ] = useState( false );
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ isSaving, setIsSaving ] = useState( false );
+	const [ timeout, setTimeout ] = useState( 360 );
+	const [ showAdvanced, setShowAdvanced ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ saveError, setSaveError ] = useState( null );
 	const modelsFetchedForUrl = useRef( '' );
@@ -100,11 +103,12 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 	const fetchSettings = useCallback( async () => {
 		try {
 			const settings = await apiFetch( {
-				path: '/wp/v2/settings?_fields=openai_compat_endpoint_url,openai_compat_api_key,openai_compat_default_model',
+				path: '/wp/v2/settings?_fields=openai_compat_endpoint_url,openai_compat_api_key,openai_compat_default_model,openai_compat_timeout',
 			} );
 			setEndpointUrl( settings.openai_compat_endpoint_url || '' );
 			setApiKey( settings.openai_compat_api_key || '' );
 			setDefaultModel( settings.openai_compat_default_model || '' );
+			setTimeout( settings.openai_compat_timeout ?? 360 );
 		} catch {
 			// Silently fail — fields will stay empty.
 		} finally {
@@ -130,8 +134,14 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 		}
 		setIsLoadingModels( true );
 		try {
+			const params = new URLSearchParams( {
+				endpoint_url: endpointUrl,
+			} );
+			if ( apiKey ) {
+				params.set( 'api_key', apiKey );
+			}
 			const result = await apiFetch( {
-				path: '/openai-compat/v1/models',
+				path: '/ai-provider-for-any-openai-compatible/v1/models?' + params.toString(),
 			} );
 			setModels( Array.isArray( result ) ? result : [] );
 			modelsFetchedForUrl.current = endpointUrl;
@@ -140,7 +150,7 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 		} finally {
 			setIsLoadingModels( false );
 		}
-	}, [ endpointUrl ] );
+	}, [ endpointUrl, apiKey ] );
 
 	// Fetch models when the card is expanded and we have an endpoint URL.
 	useEffect( () => {
@@ -160,11 +170,13 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 					openai_compat_endpoint_url: endpointUrl,
 					openai_compat_api_key: apiKey,
 					openai_compat_default_model: defaultModel,
+					openai_compat_timeout: parseInt( timeout, 10 ) || 360,
 				},
 			} );
 			setEndpointUrl( result.openai_compat_endpoint_url || '' );
 			setApiKey( result.openai_compat_api_key || '' );
 			setDefaultModel( result.openai_compat_default_model || '' );
+			setTimeout( result.openai_compat_timeout ?? 360 );
 			setIsExpanded( false );
 		} catch ( error ) {
 			setSaveError(
@@ -188,13 +200,16 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 					openai_compat_endpoint_url: '',
 					openai_compat_api_key: '',
 					openai_compat_default_model: '',
+					openai_compat_timeout: 360,
 				},
 			} );
 			setEndpointUrl( '' );
 			setApiKey( '' );
 			setDefaultModel( '' );
+			setTimeout( 360 );
 			setModels( [] );
 			modelsFetchedForUrl.current = '';
+			setShowAdvanced( false );
 			setIsExpanded( false );
 		} catch ( error ) {
 			setSaveError(
@@ -318,6 +333,30 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 					/>
 				) }
 			</div>
+			<Button
+				variant="link"
+				onClick={ () => setShowAdvanced( ! showAdvanced ) }
+				style={ { alignSelf: 'flex-start' } }
+			>
+				{ showAdvanced
+					? __( 'Advanced options \u25B4' )
+					: __( 'Advanced options \u25BE' ) }
+			</Button>
+			{ showAdvanced && (
+				<NumberControl
+					__next40pxDefaultSize
+					label={ __( 'Request Timeout (seconds)' ) }
+					value={ timeout }
+					onChange={ ( value ) => setTimeout( parseInt( value, 10 ) || 360 ) }
+					min={ 10 }
+					max={ 600 }
+					step={ 10 }
+					disabled={ isSaving }
+					help={ __(
+						'Maximum time to wait for inference responses. Increase for slow hardware.'
+					) }
+				/>
+			) }
 			{ isConnected && (
 				<Button
 					variant="link"
@@ -345,7 +384,7 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 
 	return (
 		<ConnectorItem
-			className="connector-item--openai-compat"
+			className="connector-item--ai-provider-for-any-openai-compatible"
 			icon={ <Logo /> }
 			name={ label }
 			description={ description }
@@ -357,7 +396,7 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 }
 
 // Register the connector card.
-registerConnector( 'openai-compat/connector', {
+registerConnector( 'ai-provider-for-any-openai-compatible/connector', {
 	label: __( 'OpenAI Compatible' ),
 	description: __(
 		'Connect to Ollama, LM Studio, OpenRouter, or any OpenAI-compatible endpoint.'

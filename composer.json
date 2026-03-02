@@ -1,0 +1,29 @@
+{
+	"name": "ultimate-multisite/openai-compatible-connector",
+	"description": "Registers a WordPress AI Client provider for any OpenAI-compatible endpoint (Ollama, LM Studio, OpenRouter, etc.).",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"authors": [
+		{
+			"name": "Ultimate Multisite Community",
+			"homepage": "https://ultimatemultisite.com"
+		}
+	],
+	"require": {
+		"php": ">=7.4"
+	},
+	"autoload": {
+		"classmap": [
+			"inc/"
+		]
+	},
+	"config": {
+		"preferred-install": "dist",
+		"sort-packages": true
+	},
+	"homepage": "https://github.com/Ultimate-Multisite/openai-compatible-connector",
+	"support": {
+		"issues": "https://github.com/Ultimate-Multisite/openai-compatible-connector/issues",
+		"source": "https://github.com/Ultimate-Multisite/openai-compatible-connector"
+	}
+}
