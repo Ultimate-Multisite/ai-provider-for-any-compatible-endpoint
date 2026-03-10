@@ -1,13 +1,13 @@
 <?php
 /**
- * Provider class for an OpenAI-compatible endpoint.
+ * Provider class for a compatible AI endpoint.
  *
- * @package OpenAiCompatibleConnector
+ * @package AiServicesConnector
  */
 
 declare(strict_types=1);
 
-namespace OpenAiCompatibleConnector;
+namespace AiServicesConnector;
 
 use WordPress\AiClient\Providers\ApiBasedImplementation\AbstractApiProvider;
 use WordPress\AiClient\Providers\ApiBasedImplementation\ListModelsApiBasedProviderAvailability;
@@ -21,12 +21,12 @@ use WordPress\AiClient\Providers\Models\DTO\ModelMetadata;
 use WordPress\AiClient\Common\Exception\RuntimeException;
 
 /**
- * Provider class for an OpenAI-compatible endpoint.
+ * Provider class for a compatible AI endpoint.
  *
  * The base URL is read from plugin settings and stored in a static property
  * so that it is available to the SDK's static `baseUrl()` method.
  */
-class OpenAiCompatProvider extends AbstractApiProvider {
+class AiServicesProvider extends AbstractApiProvider {
 
 	/**
 	 * Configured endpoint URL. Set from options before registration.
@@ -52,7 +52,7 @@ class OpenAiCompatProvider extends AbstractApiProvider {
 		$capabilities = $modelMetadata->getSupportedCapabilities();
 		foreach ( $capabilities as $capability ) {
 			if ( $capability->isTextGeneration() ) {
-				return new OpenAiCompatModel( $modelMetadata, $providerMetadata );
+				return new AiServicesModel( $modelMetadata, $providerMetadata );
 			}
 		}
 
@@ -66,8 +66,8 @@ class OpenAiCompatProvider extends AbstractApiProvider {
 	 */
 	protected static function createProviderMetadata(): ProviderMetadata {
 		return new ProviderMetadata(
-			'ai-provider-for-any-openai-compatible',
-			'OpenAI Compatible',
+			'ai-services-connector',
+			'AI Services',
 			ProviderTypeEnum::server(),
 			null,
 			RequestAuthenticationMethod::apiKey()
@@ -87,6 +87,6 @@ class OpenAiCompatProvider extends AbstractApiProvider {
 	 * {@inheritDoc}
 	 */
 	protected static function createModelMetadataDirectory(): ModelMetadataDirectoryInterface {
-		return new OpenAiCompatModelDirectory();
+		return new AiServicesModelDirectory();
 	}
 }

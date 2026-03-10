@@ -1,6 +1,6 @@
-# AGENTS.md — AI Provider for Any OpenAI-Compatible Endpoint
+# AGENTS.md — AI Services Connector
 
-WordPress plugin that registers an AI Client provider for Ollama, LM Studio, or any endpoint using the OpenAI-compatible API format. Not affiliated with OpenAI.
+WordPress plugin that registers an AI Client provider for Ollama, LM Studio, or any AI endpoint using the standard chat completions API format.
 
 ## Build Commands
 
@@ -46,8 +46,8 @@ npx eslint src/
 ### PHP
 
 - **Strict types**: Every PHP file must declare `declare(strict_types=1);`
-- **Namespace**: `OpenAiCompatibleConnector` for all classes and functions (legacy, kept for compatibility)
-- **File headers**: Include `@package AiProviderOpenaiCompatible` in docblocks
+- **Namespace**: `AiServicesConnector` for all classes and functions
+- **File headers**: Include `@package AiServicesConnector` in docblocks
 - **WordPress standards**: Use WordPress coding style (tabs, Yoda conditions, etc.)
 - **Type hints**: Use PHP 7.4+ type declarations for parameters and return types
 - **Escaping**: Always escape output (`esc_html()`, `esc_url()`, `esc_attr()`)
@@ -59,7 +59,7 @@ npx eslint src/
 <?php
 declare(strict_types=1);
 
-namespace OpenAiCompatibleConnector;
+namespace AiServicesConnector;
 
 /**
  * Function description.
@@ -106,31 +106,31 @@ function MyComponent() {
 | Type | Convention | Example |
 |------|------------|---------|
 | PHP functions | `snake_case` | `register_settings()` |
-| PHP classes | `PascalCase` | `OpenAiCompatProvider` |
-| PHP constants | `UPPER_SNAKE_CASE` | `AI_PROVIDER_OPENAI_COMPAT_FILE` |
+| PHP classes | `PascalCase` | `AiServicesProvider` |
+| PHP constants | `UPPER_SNAKE_CASE` | `AI_SERVICES_CONNECTOR_FILE` |
 | JS functions | `camelCase` | `fetchModels()` |
 | JS components | `PascalCase` | `ConnectorCard` |
-| CSS classes | `kebab-case` | `connector-item--openai` |
-| Options | `snake_case` with prefix | `openai_compat_endpoint_url` |
-| REST routes | `kebab-case` | `/ai-provider-for-any-openai-compatible/v1/models` |
+| CSS classes | `kebab-case` | `connector-item--ai-services` |
+| Options | `snake_case` with prefix | `ai_services_endpoint_url` |
+| REST routes | `kebab-case` | `/ai-services-connector/v1/models` |
 
 ### File Organization
 
 ```
-├── ai-provider-for-any-openai-compatible.php  # Main plugin file, hooks
+├── ai-services-connector.php       # Main plugin file, hooks
 ├── inc/
-│   ├── class-provider.php      # AbstractApiProvider implementation
-│   ├── class-model.php         # Text generation model
-│   ├── class-model-directory.php # Model listing from /models endpoint
-│   ├── settings.php            # register_setting() calls
-│   ├── admin.php               # Script module enqueue
-│   ├── rest-api.php            # REST endpoint for model proxy
-│   ├── http-filters.php        # Timeout, port, host filters
-│   └── provider-registration.php # AiClient registry integration
+│   ├── class-provider.php          # AbstractApiProvider implementation
+│   ├── class-model.php             # Text generation model
+│   ├── class-model-directory.php   # Model listing from /models endpoint
+│   ├── settings.php                # register_setting() calls
+│   ├── admin.php                   # Script module enqueue
+│   ├── rest-api.php                # REST endpoint for model proxy
+│   ├── http-filters.php            # Timeout, port, host filters
+│   └── provider-registration.php   # AiClient registry integration
 ├── src/
-│   └── index.jsx               # Connectors page UI component
+│   └── index.jsx                   # Connectors page UI component
 └── build/
-    └── connector.js            # Compiled ES module (gitignored: no)
+    └── connector.js                # Compiled ES module (gitignored: no)
 ```
 
 ### Error Handling
@@ -161,7 +161,7 @@ try {
 This plugin extends the WordPress AI Client SDK. Key classes:
 
 - `AbstractApiProvider` — Base class for API-based providers
-- `AbstractOpenAiCompatibleTextGenerationModel` — OpenAI-format chat completions
+- `AbstractOpenAiCompatibleTextGenerationModel` — Standard chat completions format
 - `AbstractOpenAiCompatibleModelMetadataDirectory` — Model listing from /models
 - `ModelMetadata`, `ProviderMetadata` — DTOs for provider/model info
 - `CapabilityEnum`, `OptionEnum` — Supported capabilities and options
@@ -169,9 +169,9 @@ This plugin extends the WordPress AI Client SDK. Key classes:
 Provider registration pattern:
 ```php
 $registry = AiClient::defaultRegistry();
-$registry->registerProvider( OpenAiCompatProvider::class );
+$registry->registerProvider( AiServicesProvider::class );
 $registry->setProviderRequestAuthentication(
-    OpenAiCompatProvider::class,
+    AiServicesProvider::class,
     new ApiKeyRequestAuthentication( $api_key )
 );
 ```
@@ -186,14 +186,14 @@ The plugin adds filters to support self-hosted inference servers:
 
 ### Settings
 
-All settings use the `openai_compat_` prefix:
+All settings use the `ai_services_` prefix:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `openai_compat_endpoint_url` | string | `''` | Base URL for API |
-| `openai_compat_api_key` | string | `''` | Bearer token (optional) |
-| `openai_compat_default_model` | string | `''` | Model ID to use |
-| `openai_compat_timeout` | integer | `360` | Request timeout in seconds |
+| `ai_services_endpoint_url` | string | `''` | Base URL for API |
+| `ai_services_api_key` | string | `''` | Bearer token (optional) |
+| `ai_services_default_model` | string | `''` | Model ID to use |
+| `ai_services_timeout` | integer | `360` | Request timeout in seconds |
 
 ### Commit Messages
 

@@ -2,12 +2,12 @@
 /**
  * Provider registration with the WordPress AI Client.
  *
- * @package OpenAiCompatibleConnector
+ * @package AiServicesConnector
  */
 
 declare(strict_types=1);
 
-namespace OpenAiCompatibleConnector;
+namespace AiServicesConnector;
 
 use WordPress\AiClient\AiClient;
 use WordPress\AiClient\Providers\Http\DTO\ApiKeyRequestAuthentication;
@@ -23,30 +23,30 @@ function register_provider(): void {
 		return;
 	}
 
-	$endpoint_url = get_option( 'openai_compat_endpoint_url', '' );
+	$endpoint_url = get_option( 'ai_services_endpoint_url', '' );
 	if ( empty( $endpoint_url ) ) {
 		return;
 	}
 
 	// Set the base URL before any SDK method can call baseUrl().
-	OpenAiCompatProvider::$endpointUrl = $endpoint_url;
+	AiServicesProvider::$endpointUrl = $endpoint_url;
 
 	$registry = AiClient::defaultRegistry();
 
-	if ( $registry->hasProvider( OpenAiCompatProvider::class ) ) {
+	if ( $registry->hasProvider( AiServicesProvider::class ) ) {
 		return;
 	}
 
-	$registry->registerProvider( OpenAiCompatProvider::class );
+	$registry->registerProvider( AiServicesProvider::class );
 
 	// Inject the API key (or a placeholder for servers that don't need one).
-	$api_key = get_option( 'openai_compat_api_key', '' );
+	$api_key = get_option( 'ai_services_api_key', '' );
 	if ( empty( $api_key ) ) {
 		$api_key = 'no-key';
 	}
 
 	$registry->setProviderRequestAuthentication(
-		OpenAiCompatProvider::class,
+		AiServicesProvider::class,
 		new ApiKeyRequestAuthentication( $api_key )
 	);
 }
@@ -57,5 +57,5 @@ function register_provider(): void {
  * @return string
  */
 function get_default_model(): string {
-	return (string) get_option( 'openai_compat_default_model', '' );
+	return (string) get_option( 'ai_services_default_model', '' );
 }

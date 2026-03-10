@@ -1,13 +1,13 @@
 <?php
 /**
- * Text generation model for an OpenAI-compatible endpoint.
+ * Text generation model for a compatible AI endpoint.
  *
- * @package OpenAiCompatibleConnector
+ * @package AiServicesConnector
  */
 
 declare(strict_types=1);
 
-namespace OpenAiCompatibleConnector;
+namespace AiServicesConnector;
 
 use WordPress\AiClient\Providers\Http\DTO\Request;
 use WordPress\AiClient\Providers\Http\Enums\HttpMethodEnum;
@@ -15,9 +15,9 @@ use WordPress\AiClient\Providers\OpenAiCompatibleImplementation\AbstractOpenAiCo
 
 /**
  * Text generation model that forwards requests to the configured endpoint
- * using the standard OpenAI chat/completions format.
+ * using the standard chat/completions format.
  */
-class OpenAiCompatModel extends AbstractOpenAiCompatibleTextGenerationModel {
+class AiServicesModel extends AbstractOpenAiCompatibleTextGenerationModel {
 
 	/**
 	 * {@inheritDoc}
@@ -30,7 +30,7 @@ class OpenAiCompatModel extends AbstractOpenAiCompatibleTextGenerationModel {
 	): Request {
 		return new Request(
 			$method,
-			OpenAiCompatProvider::url( $path ),
+			AiServicesProvider::url( $path ),
 			$headers,
 			$data,
 			$this->getRequestOptions()

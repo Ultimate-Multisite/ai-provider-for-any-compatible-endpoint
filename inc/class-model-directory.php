@@ -1,13 +1,13 @@
 <?php
 /**
- * Model metadata directory for an OpenAI-compatible endpoint.
+ * Model metadata directory for a compatible AI endpoint.
  *
- * @package OpenAiCompatibleConnector
+ * @package AiServicesConnector
  */
 
 declare(strict_types=1);
 
-namespace OpenAiCompatibleConnector;
+namespace AiServicesConnector;
 
 use WordPress\AiClient\Providers\Http\DTO\Request;
 use WordPress\AiClient\Providers\Http\DTO\Response;
@@ -21,7 +21,7 @@ use WordPress\AiClient\Providers\OpenAiCompatibleImplementation\AbstractOpenAiCo
 /**
  * Lists available models from the configured endpoint's /models resource.
  */
-class OpenAiCompatModelDirectory extends AbstractOpenAiCompatibleModelMetadataDirectory {
+class AiServicesModelDirectory extends AbstractOpenAiCompatibleModelMetadataDirectory {
 
 	/**
 	 * {@inheritDoc}
@@ -34,7 +34,7 @@ class OpenAiCompatModelDirectory extends AbstractOpenAiCompatibleModelMetadataDi
 	): Request {
 		return new Request(
 			$method,
-			OpenAiCompatProvider::url( $path ),
+			AiServicesProvider::url( $path ),
 			$headers,
 			$data
 		);

@@ -1,13 +1,13 @@
 <?php
 /**
- * Admin integration for the OpenAI-Compatible Connector.
+ * Admin integration for the AI Services Connector.
  *
- * @package OpenAiCompatibleConnector
+ * @package AiServicesConnector
  */
 
 declare(strict_types=1);
 
-namespace OpenAiCompatibleConnector;
+namespace AiServicesConnector;
 
 /**
  * Enqueues the connector script module on the Connectors admin page.
@@ -17,15 +17,15 @@ namespace OpenAiCompatibleConnector;
  */
 function enqueue_connector_module(): void {
 	wp_register_script_module(
-		'ai-provider-for-any-openai-compatible',
-		plugins_url( 'build/connector.js', AI_PROVIDER_OPENAI_COMPAT_FILE ),
+		'ai-services-connector',
+		plugins_url( 'build/connector.js', AI_SERVICES_CONNECTOR_FILE ),
 		[
 			[
 				'id'     => '@wordpress/connectors',
 				'import' => 'static',
 			],
 		],
-		'1.2.0'
+		'1.0.0'
 	);
-	wp_enqueue_script_module( 'ai-provider-for-any-openai-compatible' );
+	wp_enqueue_script_module( 'ai-services-connector' );
 }

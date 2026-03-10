@@ -1,10 +1,10 @@
 /**
- * AI Provider for OpenAI-Compatible — Connectors page integration.
+ * AI Services Connector — Connectors page integration.
  *
  * Registers a card on Settings > Connectors that lets users configure
  * the Endpoint URL, API Key, and Default Model from one place.
  *
- * @package AiProviderOpenaiCompatible
+ * @package AiServicesConnector
  */
 
 import {
@@ -84,7 +84,7 @@ function ConnectedBadge() {
 /**
  * Main connector card component rendered on the Connectors page.
  */
-function OpenAiCompatConnectorCard( { slug, label, description } ) {
+function AiServicesConnectorCard( { slug, label, description } ) {
 	const [ endpointUrl, setEndpointUrl ] = useState( '' );
 	const [ apiKey, setApiKey ] = useState( '' );
 	const [ defaultModel, setDefaultModel ] = useState( '' );
@@ -103,12 +103,12 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 	const fetchSettings = useCallback( async () => {
 		try {
 			const settings = await apiFetch( {
-				path: '/wp/v2/settings?_fields=openai_compat_endpoint_url,openai_compat_api_key,openai_compat_default_model,openai_compat_timeout',
+				path: '/wp/v2/settings?_fields=ai_services_endpoint_url,ai_services_api_key,ai_services_default_model,ai_services_timeout',
 			} );
-			setEndpointUrl( settings.openai_compat_endpoint_url || '' );
-			setApiKey( settings.openai_compat_api_key || '' );
-			setDefaultModel( settings.openai_compat_default_model || '' );
-			setTimeout( settings.openai_compat_timeout ?? 360 );
+			setEndpointUrl( settings.ai_services_endpoint_url || '' );
+			setApiKey( settings.ai_services_api_key || '' );
+			setDefaultModel( settings.ai_services_default_model || '' );
+			setTimeout( settings.ai_services_timeout ?? 360 );
 		} catch {
 			// Silently fail — fields will stay empty.
 		} finally {
@@ -141,7 +141,7 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 				params.set( 'api_key', apiKey );
 			}
 			const result = await apiFetch( {
-				path: '/ai-provider-for-any-openai-compatible/v1/models?' + params.toString(),
+				path: '/ai-services-connector/v1/models?' + params.toString(),
 			} );
 			setModels( Array.isArray( result ) ? result : [] );
 			modelsFetchedForUrl.current = endpointUrl;
@@ -167,16 +167,16 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 				method: 'POST',
 				path: '/wp/v2/settings',
 				data: {
-					openai_compat_endpoint_url: endpointUrl,
-					openai_compat_api_key: apiKey,
-					openai_compat_default_model: defaultModel,
-					openai_compat_timeout: parseInt( timeout, 10 ) || 360,
+					ai_services_endpoint_url: endpointUrl,
+					ai_services_api_key: apiKey,
+					ai_services_default_model: defaultModel,
+					ai_services_timeout: parseInt( timeout, 10 ) || 360,
 				},
 			} );
-			setEndpointUrl( result.openai_compat_endpoint_url || '' );
-			setApiKey( result.openai_compat_api_key || '' );
-			setDefaultModel( result.openai_compat_default_model || '' );
-			setTimeout( result.openai_compat_timeout ?? 360 );
+			setEndpointUrl( result.ai_services_endpoint_url || '' );
+			setApiKey( result.ai_services_api_key || '' );
+			setDefaultModel( result.ai_services_default_model || '' );
+			setTimeout( result.ai_services_timeout ?? 360 );
 			setIsExpanded( false );
 		} catch ( error ) {
 			setSaveError(
@@ -197,10 +197,10 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 				method: 'POST',
 				path: '/wp/v2/settings',
 				data: {
-					openai_compat_endpoint_url: '',
-					openai_compat_api_key: '',
-					openai_compat_default_model: '',
-					openai_compat_timeout: 360,
+					ai_services_endpoint_url: '',
+					ai_services_api_key: '',
+					ai_services_default_model: '',
+					ai_services_timeout: 360,
 				},
 			} );
 			setEndpointUrl( '' );
@@ -293,7 +293,7 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 				help={
 					saveError
 						? <span style={ { color: '#cc1818' } }>{ saveError }</span>
-						: __( 'Base URL for the OpenAI-compatible API (e.g. Ollama, LM Studio, OpenRouter).' )
+						: __( 'Base URL for the AI endpoint (e.g. Ollama, LM Studio, OpenRouter).' )
 				}
 			/>
 			<TextControl
@@ -384,7 +384,7 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 
 	return (
 		<ConnectorItem
-			className="connector-item--ai-provider-for-any-openai-compatible"
+			className="connector-item--ai-services-connector"
 			icon={ <Logo /> }
 			name={ label }
 			description={ description }
@@ -396,10 +396,10 @@ function OpenAiCompatConnectorCard( { slug, label, description } ) {
 }
 
 // Register the connector card.
-registerConnector( 'ai-provider-for-any-openai-compatible/connector', {
-	label: __( 'AI Provider for OpenAI-Compatible' ),
+registerConnector( 'ai-services-connector/connector', {
+	label: __( 'AI Services' ),
 	description: __(
-		'Connect to Ollama, LM Studio, or any endpoint using the OpenAI-compatible API format. Not affiliated with OpenAI.'
+		'Connect to Ollama, LM Studio, or any AI endpoint using the standard chat completions API format.'
 	),
-	render: OpenAiCompatConnectorCard,
+	render: AiServicesConnectorCard,
 } );

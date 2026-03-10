@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: AI Provider for Any OpenAI-Compatible Endpoint
- * Plugin URI: https://github.com/Ultimate-Multisite/ai-provider-for-any-openai-compatible
- * Description: Registers an AI Client provider for Ollama, LM Studio, or any endpoint using the OpenAI-compatible API format. Not affiliated with OpenAI.
+ * Plugin Name: AI Services Connector
+ * Plugin URI: https://github.com/Ultimate-Multisite/ai-services-connector
+ * Description: Registers an AI Client provider for Ollama, LM Studio, or any AI endpoint using the standard chat completions API format.
  * Requires at least: 6.9
  * Requires PHP: 7.4
  * Version: 1.0.0
@@ -10,14 +10,14 @@
  * Author URI: https://developer.developer.developer
  * License: GPL-2.0-or-later
  * License URI: https://spdx.org/licenses/GPL-2.0-or-later.html
- * Text Domain: ai-provider-for-any-openai-compatible
+ * Text Domain: ai-services-connector
  *
- * @package AiProviderOpenaiCompatible
+ * @package AiServicesConnector
  */
 
 declare(strict_types=1);
 
-namespace OpenAiCompatibleConnector;
+namespace AiServicesConnector;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @var string
  */
-define( 'AI_PROVIDER_OPENAI_COMPAT_FILE', __FILE__ );
+define( 'AI_SERVICES_CONNECTOR_FILE', __FILE__ );
 
 // ---------------------------------------------------------------------------
 // Load classes and function files.

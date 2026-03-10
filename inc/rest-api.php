@@ -2,12 +2,12 @@
 /**
  * REST API endpoint for listing models from the configured endpoint.
  *
- * @package OpenAiCompatibleConnector
+ * @package AiServicesConnector
  */
 
 declare(strict_types=1);
 
-namespace OpenAiCompatibleConnector;
+namespace AiServicesConnector;
 
 /**
  * Registers a REST route that proxies /models from the configured endpoint.
@@ -16,7 +16,7 @@ namespace OpenAiCompatibleConnector;
  */
 function register_models_route(): void {
 	register_rest_route(
-		'ai-provider-for-any-openai-compatible/v1',
+		'ai-services-connector/v1',
 		'/models',
 		[
 			'methods'             => 'GET',
@@ -49,13 +49,13 @@ function register_models_route(): void {
 function rest_list_models( \WP_REST_Request $request ) {
 	$endpoint_url = $request->get_param( 'endpoint_url' );
 	if ( empty( $endpoint_url ) ) {
-		$endpoint_url = get_option( 'openai_compat_endpoint_url', '' );
+		$endpoint_url = get_option( 'ai_services_endpoint_url', '' );
 	}
 
 	if ( empty( $endpoint_url ) ) {
 		return new \WP_Error(
 			'no_endpoint',
-			__( 'No endpoint URL configured.', 'openai-compatible-connector' ),
+			__( 'No endpoint URL configured.', 'ai-services-connector' ),
 			[ 'status' => 400 ]
 		);
 	}
@@ -64,7 +64,7 @@ function rest_list_models( \WP_REST_Request $request ) {
 
 	$api_key = $request->get_param( 'api_key' );
 	if ( null === $api_key ) {
-		$api_key = get_option( 'openai_compat_api_key', '' );
+		$api_key = get_option( 'ai_services_api_key', '' );
 	}
 
 	$headers = [
@@ -98,7 +98,7 @@ function rest_list_models( \WP_REST_Request $request ) {
 			'upstream_error',
 			sprintf(
 				/* translators: %d: HTTP status code */
-				__( 'Upstream returned HTTP %d.', 'openai-compatible-connector' ),
+				__( 'Upstream returned HTTP %d.', 'ai-services-connector' ),
 				$code
 			),
 			[ 'status' => 502 ]
@@ -110,12 +110,12 @@ function rest_list_models( \WP_REST_Request $request ) {
 	if ( ! is_array( $body ) ) {
 		return new \WP_Error(
 			'invalid_response',
-			__( 'Could not parse models response.', 'openai-compatible-connector' ),
+			__( 'Could not parse models response.', 'ai-services-connector' ),
 			[ 'status' => 502 ]
 		);
 	}
 
-	// OpenAI format: { data: [...] }  Ollama format: { models: [...] }
+	// Standard format: { data: [...] }  Ollama format: { models: [...] }
 	$models_data = [];
 	if ( isset( $body['data'] ) && is_array( $body['data'] ) ) {
 		$models_data = $body['data'];
