@@ -2,7 +2,7 @@
 /**
  * Model metadata directory for a compatible AI endpoint.
  *
- * @package AiProviderCompatibleEndpoint
+ * @package GratisAiProviderCompatibleEndpoint
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 declare(strict_types=1);
 
-namespace AiProviderCompatibleEndpoint;
+namespace GratisAiProviderCompatibleEndpoint;
 
 use WordPress\AiClient\Providers\Http\DTO\Request;
 use WordPress\AiClient\Providers\Http\DTO\Response;

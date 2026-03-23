@@ -2,7 +2,7 @@
 /**
  * Provider class for a compatible AI endpoint.
  *
- * @package AiProviderCompatibleEndpoint
+ * @package GratisAiProviderCompatibleEndpoint
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 declare(strict_types=1);
 
-namespace AiProviderCompatibleEndpoint;
+namespace GratisAiProviderCompatibleEndpoint;
 
 use WordPress\AiClient\Providers\ApiBasedImplementation\AbstractApiProvider;
 use WordPress\AiClient\Providers\ApiBasedImplementation\ListModelsApiBasedProviderAvailability;
@@ -70,7 +70,7 @@ class CompatibleEndpointProvider extends AbstractApiProvider {
 	 */
 	protected static function createProviderMetadata(): ProviderMetadata {
 		return new ProviderMetadata(
-			'ai-provider-for-any-compatible-endpoint',
+			'gratis-ai-provider-for-any-compatible-endpoint',
 			'Compatible Endpoint',
 			ProviderTypeEnum::server(),
 			null,

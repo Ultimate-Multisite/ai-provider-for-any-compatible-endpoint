@@ -1,4 +1,4 @@
-=== AI Provider for Any Compatible Endpoint ===
+=== Gratis AI Provider for Any Compatible Endpoint ===
 Contributors: superdav42
 Tags: ai, ollama, llm, connectors, local-ai
 Requires at least: 6.9
@@ -44,7 +44,7 @@ The plugin also handles practical concerns like extended HTTP timeouts for slow 
 
 == Installation ==
 
-1. Upload the plugin files to `/wp-content/plugins/ai-provider-for-any-compatible-endpoint/`.
+1. Upload the plugin files to `/wp-content/plugins/gratis-ai-provider-for-any-compatible-endpoint/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. **WordPress 6.9 only:** Make sure the [AI Experiments](https://wordpress.org/plugins/ai/) plugin is installed and active. It provides the AI Client SDK that this plugin requires.
 4. Go to **Settings > Connectors** and configure the connector.

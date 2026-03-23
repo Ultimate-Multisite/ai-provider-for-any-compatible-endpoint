@@ -1,4 +1,4 @@
-# AGENTS.md — AI Provider for Any Compatible Endpoint
+# AGENTS.md — Gratis AI Provider for Any Compatible Endpoint
 
 WordPress plugin that registers an AI Client provider for Ollama, LM Studio, or any AI endpoint using the standard chat completions API format.
 
@@ -46,8 +46,8 @@ npx eslint src/
 ### PHP
 
 - **Strict types**: Every PHP file must declare `declare(strict_types=1);`
-- **Namespace**: `AiProviderCompatibleEndpoint` for all classes and functions
-- **File headers**: Include `@package AiProviderCompatibleEndpoint` in docblocks
+- **Namespace**: `GratisAiProviderCompatibleEndpoint` for all classes and functions
+- **File headers**: Include `@package GratisAiProviderCompatibleEndpoint` in docblocks
 - **WordPress standards**: Use WordPress coding style (tabs, Yoda conditions, etc.)
 - **Type hints**: Use PHP 7.4+ type declarations for parameters and return types
 - **Escaping**: Always escape output (`esc_html()`, `esc_url()`, `esc_attr()`)
@@ -59,7 +59,7 @@ npx eslint src/
 <?php
 declare(strict_types=1);
 
-namespace AiProviderCompatibleEndpoint;
+namespace GratisAiProviderCompatibleEndpoint;
 
 /**
  * Function description.
@@ -107,17 +107,17 @@ function MyComponent() {
 |------|------------|---------|
 | PHP functions | `snake_case` | `register_settings()` |
 | PHP classes | `PascalCase` | `CompatibleEndpointProvider` |
-| PHP constants | `UPPER_SNAKE_CASE` | `AI_PROVIDER_COMPATIBLE_ENDPOINT_FILE` |
+| PHP constants | `UPPER_SNAKE_CASE` | `GRATIS_AI_PROVIDER_COMPATIBLE_ENDPOINT_FILE` |
 | JS functions | `camelCase` | `fetchModels()` |
 | JS components | `PascalCase` | `CompatibleEndpointConnectorCard` |
-| CSS classes | `kebab-case` | `connector-item--ai-provider-for-any-compatible-endpoint` |
-| Options | `snake_case` with prefix | `ai_provider_endpoint_url` |
-| REST routes | `kebab-case` | `/ai-provider-for-any-compatible-endpoint/v1/models` |
+| CSS classes | `kebab-case` | `connector-item--gratis-ai-provider-for-any-compatible-endpoint` |
+| Options | `snake_case` with prefix | `gratis_ai_provider_endpoint_url` |
+| REST routes | `kebab-case` | `/gratis-ai-provider-for-any-compatible-endpoint/v1/models` |
 
 ### File Organization
 
 ```
-├── ai-provider-for-any-compatible-endpoint.php  # Main plugin file, hooks
+├── gratis-ai-provider-for-any-compatible-endpoint.php  # Main plugin file, hooks
 ├── inc/
 │   ├── class-provider.php          # AbstractApiProvider implementation
 │   ├── class-model.php             # Text generation model
@@ -186,14 +186,14 @@ The plugin adds filters to support self-hosted inference servers:
 
 ### Settings
 
-All settings use the `ai_provider_` prefix:
+All settings use the `gratis_ai_provider_` prefix:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `ai_provider_endpoint_url` | string | `''` | Base URL for API |
-| `ai_provider_api_key` | string | `''` | Bearer token (optional) |
-| `ai_provider_default_model` | string | `''` | Model ID to use |
-| `ai_provider_timeout` | integer | `360` | Request timeout in seconds |
+| `gratis_ai_provider_endpoint_url` | string | `''` | Base URL for API |
+| `gratis_ai_provider_api_key` | string | `''` | Bearer token (optional) |
+| `gratis_ai_provider_default_model` | string | `''` | Model ID to use |
+| `gratis_ai_provider_timeout` | integer | `360` | Request timeout in seconds |
 
 ### Commit Messages
 

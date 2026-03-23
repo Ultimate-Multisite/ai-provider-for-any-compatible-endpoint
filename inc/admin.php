@@ -1,8 +1,8 @@
 <?php
 /**
- * Admin integration for the AI Provider for Any Compatible Endpoint plugin.
+ * Admin integration for the Gratis AI Provider for Any Compatible Endpoint plugin.
  *
- * @package AiProviderCompatibleEndpoint
+ * @package GratisAiProviderCompatibleEndpoint
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 declare(strict_types=1);
 
-namespace AiProviderCompatibleEndpoint;
+namespace GratisAiProviderCompatibleEndpoint;
 
 /**
  * Enqueues the connector script module on the Connectors admin page.
@@ -21,8 +21,8 @@ namespace AiProviderCompatibleEndpoint;
  */
 function enqueue_connector_module(): void {
 	wp_register_script_module(
-		'ai-provider-for-any-compatible-endpoint',
-		plugins_url( 'build/connector.js', AI_PROVIDER_COMPATIBLE_ENDPOINT_FILE ),
+		'gratis-ai-provider-for-any-compatible-endpoint',
+		plugins_url( 'build/connector.js', GRATIS_AI_PROVIDER_COMPATIBLE_ENDPOINT_FILE ),
 		[
 			[
 				'id'     => '@wordpress/connectors',
@@ -31,5 +31,5 @@ function enqueue_connector_module(): void {
 		],
 		'1.0.0'
 	);
-	wp_enqueue_script_module( 'ai-provider-for-any-compatible-endpoint' );
+	wp_enqueue_script_module( 'gratis-ai-provider-for-any-compatible-endpoint' );
 }

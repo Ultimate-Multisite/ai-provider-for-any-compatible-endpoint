@@ -1,8 +1,8 @@
 <?php
 /**
- * Settings registration for the AI Provider for Any Compatible Endpoint plugin.
+ * Settings registration for the Gratis AI Provider for Any Compatible Endpoint plugin.
  *
- * @package AiProviderCompatibleEndpoint
+ * @package GratisAiProviderCompatibleEndpoint
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,15 +11,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 declare(strict_types=1);
 
-namespace AiProviderCompatibleEndpoint;
+namespace GratisAiProviderCompatibleEndpoint;
 
 /**
  * Registers the plugin settings for the REST API and admin.
  */
 function register_settings(): void {
 	register_setting(
-		'ai_provider_connector',
-		'ai_provider_endpoint_url',
+		'gratis_ai_provider_connector',
+		'gratis_ai_provider_endpoint_url',
 		[
 			'type'              => 'string',
 			'sanitize_callback' => 'esc_url_raw',
@@ -29,8 +29,8 @@ function register_settings(): void {
 	);
 
 	register_setting(
-		'ai_provider_connector',
-		'ai_provider_api_key',
+		'gratis_ai_provider_connector',
+		'gratis_ai_provider_api_key',
 		[
 			'type'              => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
@@ -40,8 +40,8 @@ function register_settings(): void {
 	);
 
 	register_setting(
-		'ai_provider_connector',
-		'ai_provider_default_model',
+		'gratis_ai_provider_connector',
+		'gratis_ai_provider_default_model',
 		[
 			'type'              => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
@@ -51,8 +51,8 @@ function register_settings(): void {
 	);
 
 	register_setting(
-		'ai_provider_connector',
-		'ai_provider_timeout',
+		'gratis_ai_provider_connector',
+		'gratis_ai_provider_timeout',
 		[
 			'type'              => 'integer',
 			'sanitize_callback' => 'absint',

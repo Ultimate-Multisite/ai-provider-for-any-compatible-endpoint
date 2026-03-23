@@ -1,10 +1,10 @@
 /**
- * AI Provider for Any Compatible Endpoint — Connectors page integration.
+ * Gratis AI Provider for Any Compatible Endpoint — Connectors page integration.
  *
  * Registers a card on Settings > Connectors that lets users configure
  * the Endpoint URL, API Key, and Default Model from one place.
  *
- * @package AiProviderCompatibleEndpoint
+ * @package GratisAiProviderCompatibleEndpoint
  */
 
 import {
@@ -103,12 +103,12 @@ function CompatibleEndpointConnectorCard( { slug, label, description } ) {
 	const fetchSettings = useCallback( async () => {
 		try {
 			const settings = await apiFetch( {
-				path: '/wp/v2/settings?_fields=ai_provider_endpoint_url,ai_provider_api_key,ai_provider_default_model,ai_provider_timeout',
+				path: '/wp/v2/settings?_fields=gratis_ai_provider_endpoint_url,gratis_ai_provider_api_key,gratis_ai_provider_default_model,gratis_ai_provider_timeout',
 			} );
-			setEndpointUrl( settings.ai_provider_endpoint_url || '' );
-			setApiKey( settings.ai_provider_api_key || '' );
-			setDefaultModel( settings.ai_provider_default_model || '' );
-			setTimeout( settings.ai_provider_timeout ?? 360 );
+			setEndpointUrl( settings.gratis_ai_provider_endpoint_url || '' );
+			setApiKey( settings.gratis_ai_provider_api_key || '' );
+			setDefaultModel( settings.gratis_ai_provider_default_model || '' );
+			setTimeout( settings.gratis_ai_provider_timeout ?? 360 );
 		} catch {
 			// Silently fail — fields will stay empty.
 		} finally {
@@ -141,7 +141,7 @@ function CompatibleEndpointConnectorCard( { slug, label, description } ) {
 				params.set( 'api_key', apiKey );
 			}
 			const result = await apiFetch( {
-				path: '/ai-provider-for-any-compatible-endpoint/v1/models?' + params.toString(),
+				path: '/gratis-ai-provider-for-any-compatible-endpoint/v1/models?' + params.toString(),
 			} );
 			setModels( Array.isArray( result ) ? result : [] );
 			modelsFetchedForUrl.current = endpointUrl;
@@ -167,16 +167,16 @@ function CompatibleEndpointConnectorCard( { slug, label, description } ) {
 				method: 'POST',
 				path: '/wp/v2/settings',
 				data: {
-					ai_provider_endpoint_url: endpointUrl,
-					ai_provider_api_key: apiKey,
-					ai_provider_default_model: defaultModel,
-					ai_provider_timeout: parseInt( timeout, 10 ) || 360,
+					gratis_ai_provider_endpoint_url: endpointUrl,
+					gratis_ai_provider_api_key: apiKey,
+					gratis_ai_provider_default_model: defaultModel,
+					gratis_ai_provider_timeout: parseInt( timeout, 10 ) || 360,
 				},
 			} );
-			setEndpointUrl( result.ai_provider_endpoint_url || '' );
-			setApiKey( result.ai_provider_api_key || '' );
-			setDefaultModel( result.ai_provider_default_model || '' );
-			setTimeout( result.ai_provider_timeout ?? 360 );
+			setEndpointUrl( result.gratis_ai_provider_endpoint_url || '' );
+			setApiKey( result.gratis_ai_provider_api_key || '' );
+			setDefaultModel( result.gratis_ai_provider_default_model || '' );
+			setTimeout( result.gratis_ai_provider_timeout ?? 360 );
 			setIsExpanded( false );
 		} catch ( error ) {
 			setSaveError(
@@ -197,10 +197,10 @@ function CompatibleEndpointConnectorCard( { slug, label, description } ) {
 				method: 'POST',
 				path: '/wp/v2/settings',
 				data: {
-					ai_provider_endpoint_url: '',
-					ai_provider_api_key: '',
-					ai_provider_default_model: '',
-					ai_provider_timeout: 360,
+					gratis_ai_provider_endpoint_url: '',
+					gratis_ai_provider_api_key: '',
+					gratis_ai_provider_default_model: '',
+					gratis_ai_provider_timeout: 360,
 				},
 			} );
 			setEndpointUrl( '' );
@@ -384,7 +384,7 @@ function CompatibleEndpointConnectorCard( { slug, label, description } ) {
 
 	return (
 		<ConnectorItem
-			className="connector-item--ai-provider-for-any-compatible-endpoint"
+			className="connector-item--gratis-ai-provider-for-any-compatible-endpoint"
 			icon={ <Logo /> }
 			name={ label }
 			description={ description }
@@ -396,7 +396,7 @@ function CompatibleEndpointConnectorCard( { slug, label, description } ) {
 }
 
 // Register the connector card.
-registerConnector( 'ai-provider-for-any-compatible-endpoint/connector', {
+registerConnector( 'gratis-ai-provider-for-any-compatible-endpoint/connector', {
 	label: __( 'Compatible Endpoint' ),
 	description: __(
 		'Connect to Ollama, LM Studio, or any AI endpoint using the standard chat completions API format.'

@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: AI Provider for Any Compatible Endpoint
- * Plugin URI: https://github.com/Ultimate-Multisite/ai-provider-for-any-compatible-endpoint
+ * Plugin Name: Gratis AI Provider for Any Compatible Endpoint
+ * Plugin URI: https://github.com/Ultimate-Multisite/gratis-ai-provider-for-any-compatible-endpoint
  * Description: Registers an AI Client provider for Ollama, LM Studio, or any AI endpoint using the standard chat completions API format.
  * Requires at least: 6.9
  * Requires PHP: 7.4
@@ -10,14 +10,14 @@
  * Author URI: https://ultimatemultisite.com
  * License: GPL-2.0-or-later
  * License URI: https://spdx.org/licenses/GPL-2.0-or-later.html
- * Text Domain: ai-provider-for-any-compatible-endpoint
+ * Text Domain: gratis-ai-provider-for-any-compatible-endpoint
  *
- * @package AiProviderCompatibleEndpoint
+ * @package GratisAiProviderCompatibleEndpoint
  */
 
 declare(strict_types=1);
 
-namespace AiProviderCompatibleEndpoint;
+namespace GratisAiProviderCompatibleEndpoint;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @var string
  */
-define( 'AI_PROVIDER_COMPATIBLE_ENDPOINT_FILE', __FILE__ );
+define( 'GRATIS_AI_PROVIDER_COMPATIBLE_ENDPOINT_FILE', __FILE__ );
 
 // ---------------------------------------------------------------------------
 // Load classes and function files.

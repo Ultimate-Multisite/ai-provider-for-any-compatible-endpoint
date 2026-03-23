@@ -1,9 +1,12 @@
 {
-  "name": "ai-provider-for-any-compatible-endpoint",
+  "name": "gratis-ai-provider-for-any-compatible-endpoint",
   "private": true,
   "scripts": {
     "build": "wp-scripts build",
-    "start": "wp-scripts start"
+    "start": "wp-scripts start",
+    "postbuild": "npm run archive",
+    "archive": "composer archive --file=$npm_package_name --format=zip",
+    "postarchive": "rm -rf $npm_package_name && unzip $npm_package_name.zip -d $npm_package_name && rm $npm_package_name.zip && zip -r $npm_package_name.zip $npm_package_name && rm -rf $npm_package_name"
   },
   "devDependencies": {
     "@wordpress/scripts": "^31.2.0"
