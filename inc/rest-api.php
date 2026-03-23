@@ -2,16 +2,15 @@
 /**
  * REST API endpoint for listing models from the configured endpoint.
  *
- * @package GratisAiProviderCompatibleEndpoint
+ * @package UltimateAiConnectorCompatibleEndpoints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-declare(strict_types=1);
 
-namespace GratisAiProviderCompatibleEndpoint;
+namespace UltimateAiConnectorCompatibleEndpoints;
 
 /**
  * Registers a REST route that proxies /models from the configured endpoint.
@@ -20,7 +19,7 @@ namespace GratisAiProviderCompatibleEndpoint;
  */
 function register_models_route(): void {
 	register_rest_route(
-		'gratis-ai-provider-for-any-compatible-endpoint/v1',
+		'ultimate-ai-connector-compatible-endpoints/v1',
 		'/models',
 		[
 			'methods'             => 'GET',
@@ -53,13 +52,13 @@ function register_models_route(): void {
 function rest_list_models( \WP_REST_Request $request ) {
 	$endpoint_url = $request->get_param( 'endpoint_url' );
 	if ( empty( $endpoint_url ) ) {
-		$endpoint_url = get_option( 'gratis_ai_provider_endpoint_url', '' );
+		$endpoint_url = get_option( 'ultimate_ai_connector_endpoint_url', '' );
 	}
 
 	if ( empty( $endpoint_url ) ) {
 		return new \WP_Error(
 			'no_endpoint',
-			__( 'No endpoint URL configured.', 'gratis-ai-provider-for-any-compatible-endpoint' ),
+			__( 'No endpoint URL configured.', 'ultimate-ai-connector-compatible-endpoints' ),
 			[ 'status' => 400 ]
 		);
 	}
@@ -68,7 +67,7 @@ function rest_list_models( \WP_REST_Request $request ) {
 
 	$api_key = $request->get_param( 'api_key' );
 	if ( null === $api_key ) {
-		$api_key = get_option( 'gratis_ai_provider_api_key', '' );
+		$api_key = get_option( 'ultimate_ai_connector_api_key', '' );
 	}
 
 	$headers = [
@@ -102,7 +101,7 @@ function rest_list_models( \WP_REST_Request $request ) {
 			'upstream_error',
 			sprintf(
 				/* translators: %d: HTTP status code */
-				__( 'Upstream returned HTTP %d.', 'gratis-ai-provider-for-any-compatible-endpoint' ),
+				__( 'Upstream returned HTTP %d.', 'ultimate-ai-connector-compatible-endpoints' ),
 				$code
 			),
 			[ 'status' => 502 ]
@@ -114,7 +113,7 @@ function rest_list_models( \WP_REST_Request $request ) {
 	if ( ! is_array( $body ) ) {
 		return new \WP_Error(
 			'invalid_response',
-			__( 'Could not parse models response.', 'gratis-ai-provider-for-any-compatible-endpoint' ),
+			__( 'Could not parse models response.', 'ultimate-ai-connector-compatible-endpoints' ),
 			[ 'status' => 502 ]
 		);
 	}
