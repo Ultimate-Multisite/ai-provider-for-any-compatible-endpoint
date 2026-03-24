@@ -2,16 +2,15 @@
 /**
  * Provider registration with the WordPress AI Client.
  *
- * @package GratisAiProviderCompatibleEndpoint
+ * @package UltimateAiConnectorCompatibleEndpoints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-declare(strict_types=1);
 
-namespace GratisAiProviderCompatibleEndpoint;
+namespace UltimateAiConnectorCompatibleEndpoints;
 
 use WordPress\AiClient\AiClient;
 use WordPress\AiClient\Providers\Http\DTO\ApiKeyRequestAuthentication;
@@ -27,7 +26,7 @@ function register_provider(): void {
 		return;
 	}
 
-	$endpoint_url = get_option( 'gratis_ai_provider_endpoint_url', '' );
+	$endpoint_url = get_option( 'ultimate_ai_connector_endpoint_url', '' );
 	if ( empty( $endpoint_url ) ) {
 		return;
 	}
@@ -44,7 +43,7 @@ function register_provider(): void {
 	$registry->registerProvider( CompatibleEndpointProvider::class );
 
 	// Inject the API key (or a placeholder for servers that don't need one).
-	$api_key = get_option( 'gratis_ai_provider_api_key', '' );
+	$api_key = get_option( 'ultimate_ai_connector_api_key', '' );
 	if ( empty( $api_key ) ) {
 		$api_key = 'no-key';
 	}
@@ -61,5 +60,5 @@ function register_provider(): void {
  * @return string
  */
 function get_default_model(): string {
-	return (string) get_option( 'gratis_ai_provider_default_model', '' );
+	return (string) get_option( 'ultimate_ai_connector_default_model', '' );
 }
