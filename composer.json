@@ -62,7 +62,13 @@
 			"composer-plugins",
 			"blueprint.json",
 			".distignore",
-			"webpack.config.js"
+			"webpack.config.js",
+			".aidevops.json",
+			".agents",
+			".gitattributes",
+			"TODO.md",
+			"todo",
+			"src"
 		]
 	}
 }
