@@ -72,7 +72,9 @@ class PluginActivationTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that all expected functions are defined.
+	 * Test that all expected non-SDK functions are defined.
+	 *
+	 * These functions are in files loaded unconditionally (no SDK dependency).
 	 */
 	public function test_expected_functions_exist() {
 		$functions = [
@@ -82,7 +84,6 @@ class PluginActivationTest extends WP_UnitTestCase {
 			'UltimateAiConnectorCompatibleEndpoints\\increase_timeout',
 			'UltimateAiConnectorCompatibleEndpoints\\allow_endpoint_port',
 			'UltimateAiConnectorCompatibleEndpoints\\allow_endpoint_host',
-			'UltimateAiConnectorCompatibleEndpoints\\register_provider',
 		];
 
 		foreach ( $functions as $function ) {
@@ -94,19 +95,24 @@ class PluginActivationTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that all expected classes are defined.
+	 * Test that all inc/ PHP files pass syntax check.
+	 *
+	 * Uses php -l to verify no parse errors exist in any plugin PHP file.
 	 */
-	public function test_expected_classes_exist() {
-		$classes = [
-			'UltimateAiConnectorCompatibleEndpoints\\CompatibleEndpointProvider',
-			'UltimateAiConnectorCompatibleEndpoints\\CompatibleEndpointModel',
-			'UltimateAiConnectorCompatibleEndpoints\\CompatibleEndpointModelDirectory',
-		];
+	public function test_all_php_files_have_valid_syntax() {
+		$plugin_dir = dirname( __DIR__, 2 );
+		$files      = glob( $plugin_dir . '/inc/*.php' );
+		$files[]    = $plugin_dir . '/ultimate-ai-connector-compatible-endpoints.php';
 
-		foreach ( $classes as $class ) {
-			$this->assertTrue(
-				class_exists( $class ),
-				"Class {$class} should be defined."
+		foreach ( $files as $file ) {
+			$output     = [];
+			$return_var = 0;
+			exec( 'php -l ' . escapeshellarg( $file ) . ' 2>&1', $output, $return_var );
+
+			$this->assertSame(
+				0,
+				$return_var,
+				'File ' . basename( $file ) . ' has syntax errors: ' . implode( "\n", $output )
 			);
 		}
 	}

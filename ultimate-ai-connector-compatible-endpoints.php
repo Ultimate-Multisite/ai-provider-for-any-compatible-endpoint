@@ -22,17 +22,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // ---------------------------------------------------------------------------
-// Load classes and function files.
+// Load function files (no SDK dependency).
 // ---------------------------------------------------------------------------
 
-require_once __DIR__ . '/inc/class-provider.php';
-require_once __DIR__ . '/inc/class-model.php';
-require_once __DIR__ . '/inc/class-model-directory.php';
 require_once __DIR__ . '/inc/settings.php';
 require_once __DIR__ . '/inc/admin.php';
 require_once __DIR__ . '/inc/rest-api.php';
 require_once __DIR__ . '/inc/http-filters.php';
-require_once __DIR__ . '/inc/provider-registration.php';
+
+// ---------------------------------------------------------------------------
+// Load SDK-dependent class files only when the AI Client SDK is available.
+// These files extend SDK abstract classes and will fatal if loaded without it.
+// ---------------------------------------------------------------------------
+
+if ( class_exists( 'WordPress\\AiClient\\Providers\\ApiBasedImplementation\\AbstractApiProvider' ) ) {
+	require_once __DIR__ . '/inc/class-provider.php';
+	require_once __DIR__ . '/inc/class-model.php';
+	require_once __DIR__ . '/inc/class-model-directory.php';
+	require_once __DIR__ . '/inc/provider-registration.php';
+}
 
 // ---------------------------------------------------------------------------
 // Hook registrations.
@@ -53,5 +61,7 @@ add_filter( 'http_request_args', __NAMESPACE__ . '\\increase_timeout', 10, 2 );
 add_filter( 'http_allowed_safe_ports', __NAMESPACE__ . '\\allow_endpoint_port' );
 add_filter( 'http_request_host_is_external', __NAMESPACE__ . '\\allow_endpoint_host', 10, 2 );
 
-// Provider registration.
-add_action( 'init', __NAMESPACE__ . '\\register_provider', 5 );
+// Provider registration (only when SDK classes are available).
+if ( function_exists( __NAMESPACE__ . '\\register_provider' ) ) {
+	add_action( 'init', __NAMESPACE__ . '\\register_provider', 5 );
+}
