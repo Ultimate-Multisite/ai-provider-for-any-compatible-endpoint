@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wp: ['6.9']
+        wp: ['7.0']
 
     services:
       mariadb:
