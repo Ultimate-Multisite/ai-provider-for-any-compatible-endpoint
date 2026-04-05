@@ -1,6 +1,6 @@
 === Ultimate AI Connector for Compatible Endpoints ===
 Contributors: superdav42
-Tags: ai, ollama, llm, connectors, local-ai
+Tags: ai, connector, ollama, llm, local-ai
 Requires at least: 6.9
 Tested up to: 7.0
 Stable tag: 1.1.0
@@ -71,6 +71,11 @@ Yes, but you must also install the [AI Experiments](https://wordpress.org/plugin
 = Does this work on WordPress 7.0 without the AI Experiments plugin? =
 
 Yes. WordPress 7.0 ships the AI Client SDK in core, so this connector plugin works on its own. You only need the AI Experiments plugin if you want the experimental AI features it provides (excerpt generation, summarization, etc.).
+
+== Screenshots ==
+
+1. The Connectors settings page — enter your endpoint URL, optional API key, and default model.
+2. Model selection in the WordPress AI Client — all models from your endpoint appear automatically.
 
 == Changelog ==
 
