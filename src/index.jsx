@@ -28,36 +28,39 @@ const { __ } = wp.i18n;
 const apiFetch = wp.apiFetch;
 
 /**
- * Server / network icon used as the connector logo.
+ * "ANY LLM" text icon used as the connector logo.
  */
 function Logo() {
 	return (
 		<svg
 			width={ 40 }
 			height={ 40 }
-			viewBox="0 0 24 24"
-			fill="none"
+			viewBox="0 0 40 40"
 			xmlns="http://www.w3.org/2000/svg"
 		>
-			<path
-				d="M4 1h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2zm0 14h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2z"
-				stroke="currentColor"
-				strokeWidth="2"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				fill="none"
-			/>
-			<circle cx={ 6 } cy={ 5 } r={ 1 } fill="currentColor" />
-			<circle cx={ 6 } cy={ 19 } r={ 1 } fill="currentColor" />
-			<line
-				x1={ 12 }
-				y1={ 9 }
-				x2={ 12 }
-				y2={ 15 }
-				stroke="currentColor"
-				strokeWidth="2"
-				strokeLinecap="round"
-			/>
+			<rect width="40" height="40" rx="8" fill="#1a1a2e" />
+			<text
+				x="20"
+				y="14"
+				textAnchor="middle"
+				fontFamily="system-ui, -apple-system, sans-serif"
+				fontSize="9"
+				fontWeight="700"
+				fill="#a78bfa"
+			>
+				ANY
+			</text>
+			<text
+				x="20"
+				y="29"
+				textAnchor="middle"
+				fontFamily="system-ui, -apple-system, sans-serif"
+				fontSize="13"
+				fontWeight="800"
+				fill="#60a5fa"
+			>
+				LLM
+			</text>
 		</svg>
 	);
 }
@@ -86,7 +89,7 @@ function ConnectedBadge() {
 /**
  * Main connector card component rendered on the Connectors page.
  */
-function CompatibleEndpointConnectorCard( { slug, label, description } ) {
+function CompatibleEndpointConnectorCard( { slug, label, description, logo } ) {
 	const [ endpointUrl, setEndpointUrl ] = useState( '' );
 	const [ apiKey, setApiKey ] = useState( '' );
 	const [ defaultModel, setDefaultModel ] = useState( '' );
@@ -387,7 +390,7 @@ function CompatibleEndpointConnectorCard( { slug, label, description } ) {
 	return (
 		<ConnectorItem
 			className="connector-item--ultimate-ai-connector-compatible-endpoints"
-			icon={ <Logo /> }
+			logo={ logo || <Logo /> }
 			name={ label }
 			description={ description }
 			actionArea={ actionArea }
@@ -406,6 +409,7 @@ const CONFIG = {
 	description: __(
 		'Connect to Ollama, LM Studio, or any AI endpoint using the standard chat completions API format.'
 	),
+	logo: <Logo />,
 	render: CompatibleEndpointConnectorCard,
 };
 
