@@ -23,10 +23,10 @@ const {
 	__experimentalNumberControl: NumberControl,
 	__experimentalHStack: HStack,
 	__experimentalVStack: VStack,
-	__experimentalCard: Card,
-	__experimentalCardBody: CardBody,
-	__experimentalCardHeader: CardHeader,
-	__experimentalCardDivider: CardDivider,
+	Card,
+	CardBody,
+	CardHeader,
+	CardDivider,
 	CheckboxControl,
 } = wp.components;
 const { __ } = wp.i18n;
