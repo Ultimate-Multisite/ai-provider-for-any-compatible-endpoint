@@ -3,7 +3,7 @@ Contributors: superdav42
 Tags: ai, connector, ollama, llm, local-ai
 Requires at least: 7.0
 Tested up to: 7.0
-Stable tag: 1.2.0
+Stable tag: 2.0.0
 Requires PHP: 7.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -72,6 +72,17 @@ Yes. WordPress 7.0 ships the AI Client SDK in core, so this connector plugin wor
 2. Model selection in the WordPress AI Client — all models from your endpoint appear automatically.
 
 == Changelog ==
+
+= 2.0.0 - Released on 2026-04-24 =
+
+* New: Multi-provider support — configure multiple AI endpoints and route requests with automatic fallback across providers.
+* Fix: Multi-provider SDK integration with correct provider IDs, registration URLs, and HTTP filter scoping per provider.
+* Fix: New provider card now auto-expands on add; script cache busting on plugin update.
+* Fix: Dynamic provider class namespace for eval() and auto-expand behaviour for newly added providers.
+* Fix: Uses stable Card/CardBody/CardHeader/CardDivider components (no longer experimental) for WordPress 6.9+ compatibility.
+* Fix: Replaced undefined DragHandle with unicode grip icon for provider drag-to-reorder.
+* Fix: Eliminated blocking HTTP request that fired on every page load.
+* Improved: GitHub Actions workflows upgraded to Node.js 24.
 
 = 1.2.0 - Released on 2026-04-09 =
 
