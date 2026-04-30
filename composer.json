@@ -1,84 +1,89 @@
 {
-	"name": "ultimate-multisite/ultimate-ai-connector-compatible-endpoints",
-	"description": "Registers a WordPress AI Client provider for Ollama, LM Studio, or any AI endpoint using the standard chat completions API format.",
-	"type": "wordpress-plugin",
-	"license": "GPL-2.0-or-later",
-	"authors": [
-		{
-			"name": "Ultimate Multisite Community",
-			"homepage": "https://ultimatemultisite.com"
-		}
-	],
-	"require": {
-		"php": ">=7.4"
-	},
-	"require-dev": {
-		"phpunit/phpunit": "^9.6 || ^10.0",
-		"yoast/phpunit-polyfills": "^3.0"
-	},
-	"autoload": {
-		"classmap": [
-			"inc/"
-		]
-	},
-	"config": {
-		"platform": {
-			"php": "8.2.0"
-		},
-		"preferred-install": "dist",
-		"sort-packages": true
-	},
-	"scripts": {
-		"test": "vendor/bin/phpunit"
-	},
-	"homepage": "https://github.com/Ultimate-Multisite/ultimate-ai-connector-compatible-endpoints",
-	"support": {
-		"issues": "https://github.com/Ultimate-Multisite/ultimate-ai-connector-compatible-endpoints/issues",
-		"source": "https://github.com/Ultimate-Multisite/ultimate-ai-connector-compatible-endpoints"
-	},
-	"archive": {
-		"exclude": [
-			"AGENTS.md",
-			"tests",
-			"cypress.env.json",
-			"cypress.config.js",
-			"cypress.config.dev.js",
-			"cypress.config.test.js",
-			".wp-env.json",
-			"bin",
-			"phpunit.xml.dist",
-			"composer.lock",
-			".phpcs.xml.dist",
-			".circleci",
-			".idea",
-			"node_modules",
-			".gitignore",
-			".phpunit.result.cache",
-			"build.sh",
-			"package.json",
-			"package-lock.json",
-			"setuptest.sh",
-			"utils",
-			"update.sh",
-			"phpstan.neon.dist",
-			"rector.php",
-			"inc/development",
-			".github",
-			".wiki",
-			"codeception.yml",
-			"CLAUDE.md",
-			".claude",
-			"patches",
-			"composer-plugins",
-			"blueprint.json",
-			".distignore",
-			"webpack.config.js",
-			".aidevops.json",
-			".agents",
-			".gitattributes",
-			"TODO.md",
-			"todo",
-			"src"
-		]
-	}
+    "name": "ultimate-multisite/ultimate-ai-connector-compatible-endpoints",
+    "description": "Registers a WordPress AI Client provider for Ollama, LM Studio, or any AI endpoint using the standard chat completions API format.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Ultimate Multisite Community",
+            "homepage": "https://ultimatemultisite.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6 || ^10.0",
+        "yoast/phpunit-polyfills": "^3.0",
+        "szepeviktor/phpstan-wordpress": "^2.0",
+        "phpstan/extension-installer": "^1.1"
+    },
+    "autoload": {
+        "classmap": [
+            "inc/"
+        ]
+    },
+    "config": {
+        "platform": {
+            "php": "8.2.0"
+        },
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
+    "homepage": "https://github.com/Ultimate-Multisite/ultimate-ai-connector-compatible-endpoints",
+    "support": {
+        "issues": "https://github.com/Ultimate-Multisite/ultimate-ai-connector-compatible-endpoints/issues",
+        "source": "https://github.com/Ultimate-Multisite/ultimate-ai-connector-compatible-endpoints"
+    },
+    "archive": {
+        "exclude": [
+            "AGENTS.md",
+            "tests",
+            "cypress.env.json",
+            "cypress.config.js",
+            "cypress.config.dev.js",
+            "cypress.config.test.js",
+            ".wp-env.json",
+            "bin",
+            "phpunit.xml.dist",
+            "composer.lock",
+            ".phpcs.xml.dist",
+            ".circleci",
+            ".idea",
+            "node_modules",
+            ".gitignore",
+            ".phpunit.result.cache",
+            "build.sh",
+            "package.json",
+            "package-lock.json",
+            "setuptest.sh",
+            "utils",
+            "update.sh",
+            "phpstan.neon.dist",
+            "rector.php",
+            "inc/development",
+            ".github",
+            ".wiki",
+            "codeception.yml",
+            "CLAUDE.md",
+            ".claude",
+            "patches",
+            "composer-plugins",
+            "blueprint.json",
+            ".distignore",
+            "webpack.config.js",
+            ".aidevops.json",
+            ".agents",
+            ".gitattributes",
+            "TODO.md",
+            "todo",
+            "src"
+        ]
+    }
 }
