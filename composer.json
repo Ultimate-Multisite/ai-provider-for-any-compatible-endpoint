@@ -85,10 +85,5 @@
             "todo",
             "src"
         ]
-    },
-    "autoload-dev": {
-        "files": [
-            "vendor/php-stubs/wordpress-stubs/wordpress-stubs.php"
-        ]
     }
 }
