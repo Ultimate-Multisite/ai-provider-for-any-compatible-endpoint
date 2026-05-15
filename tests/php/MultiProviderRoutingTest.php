@@ -336,11 +336,11 @@ class MultiProviderRoutingTest extends WP_UnitTestCase {
 		$this->assertNotSame( $alpha_key, $beta_key, 'Different endpoints must yield different cache keys.' );
 
 		// Same endpoint URL must yield the same key (cache stability).
-		$alpha_dup = new CompatibleEndpointModelDirectory( 'http://alpha.example.test/v1' );
+		$alpha_dup = new $directory_class( 'http://alpha.example.test/v1' );
 		$this->assertSame( $alpha_key, $key_method->invoke( $alpha_dup ) );
 
 		// Trailing slash normalised so http://x/v1/ and http://x/v1 share a slot.
-		$alpha_slash = new CompatibleEndpointModelDirectory( 'http://alpha.example.test/v1/' );
+		$alpha_slash = new $directory_class( 'http://alpha.example.test/v1/' );
 		$this->assertSame( $alpha_key, $key_method->invoke( $alpha_slash ) );
 	}
 }
