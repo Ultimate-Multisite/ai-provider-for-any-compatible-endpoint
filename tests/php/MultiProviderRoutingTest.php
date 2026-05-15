@@ -301,4 +301,46 @@ class MultiProviderRoutingTest extends WP_UnitTestCase {
 			array_column( $resp->get_data(), 'id' )
 		);
 	}
+
+	/**
+	 * REGRESSION: Each ModelMetadataDirectory instance must use a cache key
+	 * scoped to its endpoint URL.
+	 *
+	 * Pre-fix behaviour: the SDK PSR-16 cache key was derived from
+	 * `static::class` alone. Because every Compatible Endpoint provider shares
+	 * the same directory class, the first endpoint to populate the SDK cache
+	 * poisoned every subsequent endpoint's model map — manifesting in the wild
+	 * as an Ollama model id being POSTed to synthetic.new's chat/completions
+	 * endpoint (HTTP 400 "Your model name should start with an hf: prefix").
+	 *
+	 * This test reproduces the collision directly: two directories with
+	 * distinct endpoint URLs must produce distinct base cache keys.
+	 */
+	public function test_directory_cache_key_includes_endpoint_url() {
+		$sdk_parent = 'WordPress\\AiClient\\Providers\\OpenAiCompatibleImplementation\\AbstractOpenAiCompatibleModelMetadataDirectory';
+		if ( ! class_exists( $sdk_parent, false ) ) {
+			$this->markTestSkipped( 'AI Client SDK not available in this test environment.' );
+		}
+
+		$directory_class = 'UltimateAiConnectorCompatibleEndpoints\\CompatibleEndpointModelDirectory';
+		$alpha           = new $directory_class( 'http://alpha.example.test/v1' );
+		$beta            = new $directory_class( 'https://beta.example.test/v1' );
+
+		// Reach getBaseCacheKey() via reflection (protected on the SDK base).
+		$key_method = ( new \ReflectionClass( $alpha ) )->getMethod( 'getBaseCacheKey' );
+		$key_method->setAccessible( true );
+
+		$alpha_key = $key_method->invoke( $alpha );
+		$beta_key  = $key_method->invoke( $beta );
+
+		$this->assertNotSame( $alpha_key, $beta_key, 'Different endpoints must yield different cache keys.' );
+
+		// Same endpoint URL must yield the same key (cache stability).
+		$alpha_dup = new CompatibleEndpointModelDirectory( 'http://alpha.example.test/v1' );
+		$this->assertSame( $alpha_key, $key_method->invoke( $alpha_dup ) );
+
+		// Trailing slash normalised so http://x/v1/ and http://x/v1 share a slot.
+		$alpha_slash = new CompatibleEndpointModelDirectory( 'http://alpha.example.test/v1/' );
+		$this->assertSame( $alpha_key, $key_method->invoke( $alpha_slash ) );
+	}
 }

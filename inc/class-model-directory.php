@@ -49,6 +49,26 @@ class CompatibleEndpointModelDirectory extends AbstractOpenAiCompatibleModelMeta
 
 	/**
 	 * {@inheritDoc}
+	 *
+	 * Mixes the endpoint URL into the base cache key so each configured
+	 * provider gets its own SDK PSR-16 cache slot.
+	 *
+	 * The parent implementation keys the cache on `static::class` alone, which
+	 * is fine for built-in single-endpoint providers but causes a critical
+	 * cross-provider collision for us: every dynamic Compatible Endpoint
+	 * provider (Ollama, synthetic.new, LM Studio, OpenRouter, …) shares the
+	 * one `CompatibleEndpointModelDirectory` class. Without this override the
+	 * first provider to populate the SDK cache poisons every subsequent
+	 * provider's model lookup with the wrong model list — manifesting as e.g.
+	 * an Ollama model id being POSTed to synthetic.new's chat/completions
+	 * endpoint.
+	 */
+	protected function getBaseCacheKey(): string {
+		return parent::getBaseCacheKey() . '_' . md5( $this->endpointUrl );
+	}
+
+	/**
+	 * {@inheritDoc}
 	 */
 	protected function createRequest(
 		HttpMethodEnum $method,
