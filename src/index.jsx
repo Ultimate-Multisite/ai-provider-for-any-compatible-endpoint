@@ -13,12 +13,14 @@ import {
 	__experimentalRegisterConnector as registerConnector,
 	__experimentalConnectorItem as ConnectorItem,
 } from '@wordpress/connectors';
+import PROVIDER_PRESETS from './provider-presets.js';
 
 const { createElement, useState, useEffect, useCallback, useRef } = wp.element;
 const {
 	Button,
 	TextControl,
 	SelectControl,
+	ComboboxControl,
 	Spinner,
 	__experimentalNumberControl: NumberControl,
 	__experimentalHStack: HStack,
@@ -31,6 +33,47 @@ const {
 } = wp.components;
 const { __ } = wp.i18n;
 const apiFetch = wp.apiFetch;
+
+/**
+ * Sentinel value used for non-selectable group-header rows in the preset
+ * combobox. ComboboxControl has no native optgroup support, so we inject
+ * pseudo-options that we ignore in onChange.
+ */
+const PRESET_HEADER_PREFIX = '__header__';
+
+/**
+ * Build the options array for the provider-preset combobox.
+ *
+ * Returns an array of `{ value, label }` entries with non-selectable
+ * `── Local ──` / `── Cloud ──` header rows separating the groups.
+ * ComboboxControl has no native optgroup support, so header rows are
+ * regular options whose value starts with PRESET_HEADER_PREFIX. We ignore
+ * those in onChange (see ProviderCard).
+ */
+function buildPresetOptions() {
+	const options = [];
+	let lastGroup = null;
+	for ( const preset of PROVIDER_PRESETS ) {
+		if ( preset.group !== lastGroup ) {
+			const headerLabel = preset.group === 'local'
+				? __( '── Local providers ──' )
+				: __( '── Cloud providers ──' );
+			options.push( {
+				value: PRESET_HEADER_PREFIX + preset.group,
+				label: headerLabel,
+			} );
+			lastGroup = preset.group;
+		}
+		options.push( {
+			value: preset.url,
+			label: preset.name + ' — ' + preset.url,
+		} );
+	}
+	return options;
+}
+
+// Static data — compute once at module load.
+const PRESET_OPTIONS = buildPresetOptions();
 
 /**
  * Generate a unique ID for a provider.
@@ -211,6 +254,65 @@ function ProviderCard( {
 								disabled={ isSaving }
 								help={ __(
 									'Base URL (e.g. Ollama, LM Studio, OpenRouter)'
+								) }
+							/>
+							<HStack
+								spacing={ 2 }
+								justify="center"
+								style={ {
+									color: '#888',
+									fontSize: '12px',
+									textTransform: 'uppercase',
+									letterSpacing: '0.5px',
+								} }
+							>
+								<span
+									style={ {
+										flex: 1,
+										height: '1px',
+										background: '#ddd',
+									} }
+								/>
+								<span>{ __( 'or pick from list' ) }</span>
+								<span
+									style={ {
+										flex: 1,
+										height: '1px',
+										background: '#ddd',
+									} }
+								/>
+							</HStack>
+							<ComboboxControl
+								__nextHasNoMarginBottom
+								label={ __( 'Provider preset' ) }
+								value={ null }
+								options={ PRESET_OPTIONS }
+								onChange={ ( value ) => {
+									// Ignore non-selectable group-header rows.
+									if (
+										! value ||
+										( typeof value === 'string' &&
+											value.startsWith( PRESET_HEADER_PREFIX ) )
+									) {
+										return;
+									}
+									const preset = PROVIDER_PRESETS.find(
+										( p ) => p.url === value
+									);
+									if ( ! preset ) {
+										return;
+									}
+									setEndpointUrl( preset.url );
+									const updates = { endpoint_url: preset.url };
+									// Only auto-fill name if currently empty.
+									if ( ! name ) {
+										setName( preset.name );
+										updates.name = preset.name;
+									}
+									onUpdate( { ...provider, ...updates } );
+								} }
+								help={ __(
+									'Type to filter ~110 known OpenAI-compatible providers. Selecting one fills the Endpoint URL above (and the Name field if empty).'
 								) }
 							/>
 							<TextControl
