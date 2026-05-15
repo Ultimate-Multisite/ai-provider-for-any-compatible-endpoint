@@ -210,6 +210,59 @@ function get_provider( string $id ): ?array {
 }
 
 /**
+ * Compute the SDK-level provider ID for a given registration order index.
+ *
+ * Mirrors ProviderFactory::sdkProviderIdForIndex(). Duplicated here so it can
+ * be called before SDK-dependent class files are loaded (settings.php loads
+ * unconditionally; class-provider-factory.php is gated on SDK availability).
+ *
+ * @param int $index 0-based registration index.
+ * @return string SDK provider ID.
+ */
+function sdk_provider_id_for_index( int $index ): string {
+	return 0 === $index
+		? 'ai-provider-for-any-openai-compatible'
+		: 'ai-provider-for-any-openai-compatible-' . ( $index + 1 );
+}
+
+/**
+ * Get a provider config by its SDK-level provider ID.
+ *
+ * SDK provider IDs are derived from registration order:
+ * - Index 0: 'ai-provider-for-any-openai-compatible'
+ * - Index N: 'ai-provider-for-any-openai-compatible-' . (N + 1)
+ *
+ * This mirrors ProviderFactory::sdkProviderIdForIndex() and only walks the
+ * subset of providers that actually get registered (i.e. enabled and with a
+ * non-empty endpoint_url), matching the iteration in
+ * ProviderFactory::registerAllProviders().
+ *
+ * @param string $sdk_provider_id SDK-level provider ID.
+ * @return array|null Provider config or null when no match.
+ */
+function get_provider_by_sdk_id( string $sdk_provider_id ): ?array {
+	if ( '' === $sdk_provider_id ) {
+		return null;
+	}
+
+	$ordered = get_providers_ordered();
+	$index   = 0;
+	foreach ( $ordered as $provider ) {
+		if ( empty( $provider['endpoint_url'] ) || ! ( $provider['enabled'] ?? true ) ) {
+			continue;
+		}
+
+		$candidate_sdk_id = sdk_provider_id_for_index( $index );
+		if ( $candidate_sdk_id === $sdk_provider_id ) {
+			return $provider;
+		}
+		++$index;
+	}
+
+	return null;
+}
+
+/**
  * Get providers in fallback order (first = highest priority).
  *
  * @return array Ordered list of provider configs.

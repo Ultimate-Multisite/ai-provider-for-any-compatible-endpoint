@@ -1,7 +1,7 @@
 === Ultimate AI Connector for Compatible Endpoints ===
 Contributors: superdav42
 Tags: ai, connector, ollama, llm, local-ai
-Requires at least: 7.0
+Requires at least: 6.9
 Tested up to: 7.0
 Stable tag: 2.0.0
 Requires PHP: 7.4
@@ -27,6 +27,7 @@ This plugin extends the WordPress AI Client to support **any AI service or serve
 **Requirements:**
 
 * **WordPress 7.0+** - The AI Client SDK is included in core. This plugin works on its own without any additional dependencies.
+* **WordPress 6.9** - Also supported when the Gutenberg plugin (23.0+) is active, which provides the AI Client SDK.
 
 **Why it matters:**
 
@@ -66,12 +67,22 @@ The plugin automatically queries your endpoint's `/models` resource and register
 
 Yes. WordPress 7.0 ships the AI Client SDK in core, so this connector plugin works on its own. You only need the AI Experiments plugin if you want the experimental AI features it provides (excerpt generation, summarization, etc.).
 
+= Can I use this on WordPress 6.9? =
+
+Yes, provided the Gutenberg plugin (version 23.0 or later) is active. Gutenberg ships the AI Client SDK that this connector extends. If the SDK is not present, the connector loads safely as a no-op and exposes no provider until the SDK becomes available.
+
 == Screenshots ==
 
 1. The Connectors settings page — enter your endpoint URL, optional API key, and default model.
 2. Model selection in the WordPress AI Client — all models from your endpoint appear automatically.
 
 == Changelog ==
+
+= 2.0.1 =
+
+* Improved: Lowered minimum WordPress requirement to 6.9 to match the upstream `ai-provider-for-openai` pattern. The plugin loads safely as a no-op until the AI Client SDK becomes available (via WordPress 7.0+ core or a sibling plugin that bundles `wordpress/php-ai-client`, e.g. Superdav AI Agent).
+* Fix: Defer SDK-dependent class loading to `plugins_loaded:5` so SDKs registered by alphabetically-later plugins (e.g. Superdav AI Agent on WP 6.9) are detected. Previously the SDK guard ran at file-include time, before later plugins had a chance to register their autoloader.
+* Fix: Multi-provider model listing now correctly returns each provider's own models. Previously the REST `/models` callback (and the `OpenAiCompatibleConnector\rest_list_models()` compatibility shim used by the AI Agent) always fell back to the primary provider's endpoint, so every OpenAI-compatible provider in a multi-provider setup showed the same model list. Callers can now pass a `provider_id` request param (the SDK provider ID, e.g. `ai-provider-for-any-openai-compatible-2`) to resolve the correct per-provider endpoint and API key. Note: the AI Agent plugin must also be updated to pass this param — without that companion change, the agent will still see the primary provider's models.
 
 = 2.0.0 - Released on 2026-04-24 =
 

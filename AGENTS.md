@@ -61,7 +61,7 @@ Config: `.wp-env.json`. Override ports: `.wp-env.override.json` (gitignored).
 
 ### Manual testing
 
-1. Ensure WordPress 7.0+ with AI Client SDK is active
+1. Ensure the AI Client SDK is available — either WordPress 7.0+ (ships in core) or WordPress 6.9 with the Gutenberg plugin (23.0+) active
 2. Activate the plugin
 3. Navigate to Settings → Connectors
 4. Configure an endpoint (e.g., `http://localhost:11434/v1` for Ollama)
@@ -268,7 +268,7 @@ The shared WordPress dev install for testing this plugin is at `../wordpress` (r
 
 - **URL**: http://wordpress.local:8080
 - **Admin**: http://wordpress.local:8080/wp-admin — `admin` / `admin`
-- **WordPress version**: 7.0-RC2
+- **WordPress version**: 6.9.4 (with Gutenberg 23.0+ providing the AI Client SDK)
 - **This plugin**: symlinked into `../wordpress/wp-content/plugins/$(basename $PWD)`
 - **Reset to clean state**: `cd ../wordpress && ./reset.sh`
 
