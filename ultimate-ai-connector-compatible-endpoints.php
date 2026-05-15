@@ -69,6 +69,13 @@ function load_sdk_dependent_classes(): void {
 	if ( function_exists( __NAMESPACE__ . '\\register_provider' ) ) {
 		add_action( 'init', __NAMESPACE__ . '\\register_provider', 5 );
 	}
+
+	// Consolidate the auto-discovered per-provider connector cards into a
+	// single card managed by our React component. Runs on wp_connectors_init,
+	// which fires after Gutenberg's default-connectors registration (init:15).
+	if ( function_exists( __NAMESPACE__ . '\\consolidate_connector_card' ) ) {
+		add_action( 'wp_connectors_init', __NAMESPACE__ . '\\consolidate_connector_card' );
+	}
 }
 
 // Try once at file-load time (WP 7.0+ in-core SDK path), and again at
