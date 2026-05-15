@@ -1,8 +1,9 @@
 {
-	"core": "WordPress/WordPress#7.0-branch",
+	"core": "WordPress/WordPress#6.9-branch",
 	"phpVersion": "8.2",
 	"plugins": [
-		"."
+		".",
+		"WordPress/gutenberg"
 	],
 	"config": {
 		"WP_DEBUG": true,
@@ -12,8 +13,12 @@
 	},
 	"env": {
 		"tests": {
-			"core": "WordPress/WordPress#7.0-branch",
+			"core": "WordPress/WordPress#6.9-branch",
 			"phpVersion": "8.2",
+			"plugins": [
+				".",
+				"WordPress/gutenberg"
+			],
 			"config": {
 				"WP_DEBUG": true,
 				"WP_DEBUG_LOG": true,
