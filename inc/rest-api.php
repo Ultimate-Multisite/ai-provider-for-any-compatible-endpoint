@@ -37,6 +37,11 @@ function register_models_route(): void {
 					'type'              => 'string',
 					'sanitize_callback' => 'sanitize_text_field',
 				],
+				'provider_id'  => [
+					'required'          => false,
+					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_text_field',
+				],
 			],
 		]
 	);
@@ -51,14 +56,28 @@ function register_models_route(): void {
 function rest_list_models( \WP_REST_Request $request ) {
 	$endpoint_url = $request->get_param( 'endpoint_url' );
 	$api_key      = $request->get_param( 'api_key' );
+	$provider_id  = $request->get_param( 'provider_id' );
 
 	if ( empty( $endpoint_url ) ) {
-		// Try multi-provider config first (v2.0.0+).
-		$primary = get_primary_provider();
-		if ( $primary ) {
-			$endpoint_url = $primary['endpoint_url'] ?? '';
+		// Resolution order:
+		// 1. If a specific SDK provider ID was requested, look up that provider.
+		//    This is the multi-provider path used by the AI Agent loop and the
+		//    `wp sd-ai-agent models --provider=...` CLI command — without this,
+		//    every OpenAI-compatible provider would resolve to the same primary
+		//    config and the agent would see duplicate model lists.
+		// 2. Otherwise, fall back to the highest-priority configured provider.
+		// 3. Finally, fall back to the legacy single-provider option.
+		$resolved = null;
+		if ( ! empty( $provider_id ) ) {
+			$resolved = get_provider_by_sdk_id( (string) $provider_id );
+		}
+		if ( null === $resolved ) {
+			$resolved = get_primary_provider();
+		}
+		if ( $resolved ) {
+			$endpoint_url = $resolved['endpoint_url'] ?? '';
 			if ( null === $api_key ) {
-				$api_key = $primary['api_key'] ?? '';
+				$api_key = $resolved['api_key'] ?? '';
 			}
 		} else {
 			// Fall back to legacy single-provider option.

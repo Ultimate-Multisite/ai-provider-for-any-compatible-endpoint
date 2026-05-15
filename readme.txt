@@ -82,6 +82,7 @@ Yes, provided the Gutenberg plugin (version 23.0 or later) is active. Gutenberg 
 
 * Improved: Lowered minimum WordPress requirement to 6.9 to match the upstream `ai-provider-for-openai` pattern. The plugin loads safely as a no-op until the AI Client SDK becomes available (via WordPress 7.0+ core or a sibling plugin that bundles `wordpress/php-ai-client`, e.g. Superdav AI Agent).
 * Fix: Defer SDK-dependent class loading to `plugins_loaded:5` so SDKs registered by alphabetically-later plugins (e.g. Superdav AI Agent on WP 6.9) are detected. Previously the SDK guard ran at file-include time, before later plugins had a chance to register their autoloader.
+* Fix: Multi-provider model listing now correctly returns each provider's own models. Previously the REST `/models` callback (and the `OpenAiCompatibleConnector\rest_list_models()` compatibility shim used by the AI Agent) always fell back to the primary provider's endpoint, so every OpenAI-compatible provider in a multi-provider setup showed the same model list. Callers can now pass a `provider_id` request param (the SDK provider ID, e.g. `ai-provider-for-any-openai-compatible-2`) to resolve the correct per-provider endpoint and API key. Note: the AI Agent plugin must also be updated to pass this param — without that companion change, the agent will still see the primary provider's models.
 
 = 2.0.0 - Released on 2026-04-24 =
 

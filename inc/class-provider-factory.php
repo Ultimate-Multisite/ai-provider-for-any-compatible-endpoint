@@ -199,9 +199,10 @@ class ProviderFactory {
 	 * @return string SDK provider ID.
 	 */
 	public static function sdkProviderIdForIndex( int $index ): string {
-		return $index === 0
-			? 'ai-provider-for-any-openai-compatible'
-			: 'ai-provider-for-any-openai-compatible-' . ( $index + 1 );
+		// Delegate to the settings-level helper so there is a single source of
+		// truth for the SDK ID formula (settings.php loads unconditionally and
+		// is callable before this SDK-gated class file).
+		return sdk_provider_id_for_index( $index );
 	}
 
 	/**

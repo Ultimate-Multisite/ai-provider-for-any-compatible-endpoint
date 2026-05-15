@@ -36,8 +36,18 @@ function get_default_model(): string {
 /**
  * Proxy to the plugin's REST model listing function.
  *
- * Called by the AI Agent's SettingsController to populate the model dropdown
- * for providers whose ID starts with 'ai-provider-for-any-openai-compatible'.
+ * Called by the AI Agent's SettingsController and ModelsCommand to populate
+ * model lists for providers whose SDK ID starts with
+ * 'ai-provider-for-any-openai-compatible'.
+ *
+ * Supported request params (set via $request->set_param() at the call site):
+ * - 'provider_id'  Optional SDK provider ID (e.g. 'ai-provider-for-any-openai-compatible-2').
+ *                  When provided, the matching configured provider's endpoint URL and API
+ *                  key are used. Without it, the call falls back to the primary provider,
+ *                  which causes every OpenAI-compatible provider in a multi-provider setup
+ *                  to incorrectly return the same model list.
+ * - 'endpoint_url' Optional explicit endpoint URL override.
+ * - 'api_key'      Optional explicit API key override.
  *
  * @param \WP_REST_Request $request REST request (may have no params when called
  *                                  internally; falls back to primary provider).

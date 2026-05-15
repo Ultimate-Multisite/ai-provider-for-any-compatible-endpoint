@@ -1,0 +1,304 @@
+<?php
+/**
+ * Test multi-provider routing of model-listing requests.
+ *
+ * Regression coverage for the v2.0.0 multi-provider bug where every
+ * OpenAI-compatible provider returned the same (primary) model list because
+ * \UltimateAiConnectorCompatibleEndpoints\rest_list_models() always fell back
+ * to get_primary_provider() when the request did not carry an explicit
+ * endpoint URL.
+ *
+ * @package UltimateAiConnectorCompatibleEndpoints
+ * @license GPL-2.0-or-later
+ */
+
+namespace UltimateAiConnectorCompatibleEndpoints\Tests;
+
+use WP_UnitTestCase;
+use WP_REST_Request;
+
+use function UltimateAiConnectorCompatibleEndpoints\get_provider_by_sdk_id;
+use function UltimateAiConnectorCompatibleEndpoints\sdk_provider_id_for_index;
+
+/**
+ * Multi-provider routing tests.
+ */
+class MultiProviderRoutingTest extends WP_UnitTestCase {
+
+	/**
+	 * Captured outgoing HTTP request URLs, keyed by call order.
+	 *
+	 * Populated by the pre_http_request short-circuit filter so tests can
+	 * assert that the correct per-provider /models URL was requested.
+	 *
+	 * @var list<string>
+	 */
+	private array $captured_urls = [];
+
+	/**
+	 * Stub /models response payload returned by the http filter.
+	 *
+	 * Distinct payload per endpoint URL so tests can prove the right one
+	 * was hit and the right body was returned to the caller.
+	 *
+	 * @var array<string, list<array{id: string, name: string}>>
+	 */
+	private array $stub_responses = [];
+
+	/**
+	 * Tear down: clear options and remove HTTP filter.
+	 */
+	public function tear_down(): void {
+		delete_option( 'ultimate_ai_connector_providers' );
+		delete_option( 'ultimate_ai_connector_provider_order' );
+		delete_option( 'ultimate_ai_connector_endpoint_url' );
+		delete_option( 'ultimate_ai_connector_api_key' );
+		remove_all_filters( 'pre_http_request' );
+		$this->captured_urls  = [];
+		$this->stub_responses = [];
+		parent::tear_down();
+	}
+
+	/**
+	 * Configure two distinct providers and install the stub HTTP filter.
+	 */
+	private function set_up_two_providers(): void {
+		update_option(
+			'ultimate_ai_connector_providers',
+			[
+				[
+					'id'            => 'provider_alpha',
+					'name'          => 'Alpha (Ollama)',
+					'endpoint_url'  => 'http://alpha.example.test/v1',
+					'api_key'       => 'alpha-key',
+					'default_model' => '',
+					'timeout'       => 360,
+					'enabled'       => true,
+				],
+				[
+					'id'            => 'provider_beta',
+					'name'          => 'Beta (Synthetic)',
+					'endpoint_url'  => 'https://beta.example.test/v1',
+					'api_key'       => 'beta-key',
+					'default_model' => 'beta-model',
+					'timeout'       => 360,
+					'enabled'       => true,
+				],
+			]
+		);
+
+		// Distinct payloads so equality assertions prove the right host was hit.
+		$this->stub_responses = [
+			'http://alpha.example.test/v1/models' => [
+				[
+					'id'   => 'alpha-model-1',
+					'name' => 'alpha-model-1',
+				],
+				[
+					'id'   => 'alpha-model-2',
+					'name' => 'alpha-model-2',
+				],
+			],
+			'https://beta.example.test/v1/models' => [
+				[
+					'id'   => 'beta-only-model',
+					'name' => 'beta-only-model',
+				],
+			],
+		];
+
+		add_filter( 'pre_http_request', [ $this, 'short_circuit_http' ], 10, 3 );
+	}
+
+	/**
+	 * Short-circuit /models HTTP requests with stub data.
+	 *
+	 * @param mixed  $pre  Filtered value (false to allow real request).
+	 * @param array  $args Request args.
+	 * @param string $url  Request URL.
+	 * @return array|mixed Stubbed wp_remote_get response or $pre.
+	 */
+	public function short_circuit_http( $pre, $args, $url ) {
+		$this->captured_urls[] = $url;
+
+		if ( ! isset( $this->stub_responses[ $url ] ) ) {
+			return $pre;
+		}
+
+		return [
+			'headers'  => [],
+			'body'     => wp_json_encode( [ 'data' => $this->stub_responses[ $url ] ] ),
+			'response' => [
+				'code'    => 200,
+				'message' => 'OK',
+			],
+			'cookies'  => [],
+			'filename' => null,
+		];
+	}
+
+	/**
+	 * SDK index 0 maps to the bare ID; index N>0 gets a numeric suffix.
+	 */
+	public function test_sdk_provider_id_for_index_formula() {
+		$this->assertSame( 'ai-provider-for-any-openai-compatible', sdk_provider_id_for_index( 0 ) );
+		$this->assertSame( 'ai-provider-for-any-openai-compatible-2', sdk_provider_id_for_index( 1 ) );
+		$this->assertSame( 'ai-provider-for-any-openai-compatible-3', sdk_provider_id_for_index( 2 ) );
+	}
+
+	/**
+	 * get_provider_by_sdk_id() resolves the registration-order index.
+	 */
+	public function test_get_provider_by_sdk_id_resolves_each_provider() {
+		$this->set_up_two_providers();
+
+		$alpha = get_provider_by_sdk_id( 'ai-provider-for-any-openai-compatible' );
+		$beta  = get_provider_by_sdk_id( 'ai-provider-for-any-openai-compatible-2' );
+
+		$this->assertNotNull( $alpha );
+		$this->assertSame( 'http://alpha.example.test/v1', $alpha['endpoint_url'] );
+		$this->assertSame( 'alpha-key', $alpha['api_key'] );
+
+		$this->assertNotNull( $beta );
+		$this->assertSame( 'https://beta.example.test/v1', $beta['endpoint_url'] );
+		$this->assertSame( 'beta-key', $beta['api_key'] );
+
+		// Unknown SDK ID must return null, not silently fall back.
+		$this->assertNull( get_provider_by_sdk_id( 'ai-provider-for-any-openai-compatible-99' ) );
+		$this->assertNull( get_provider_by_sdk_id( '' ) );
+	}
+
+	/**
+	 * Disabled providers are skipped, but registration-order indexing still
+	 * matches what ProviderFactory::registerAllProviders() actually registers.
+	 */
+	public function test_get_provider_by_sdk_id_skips_disabled_providers() {
+		update_option(
+			'ultimate_ai_connector_providers',
+			[
+				[
+					'id'           => 'p_disabled',
+					'name'         => 'Disabled',
+					'endpoint_url' => 'http://disabled.example.test/v1',
+					'api_key'      => 'd-key',
+					'enabled'      => false,
+				],
+				[
+					'id'           => 'p_real_first',
+					'name'         => 'Real first',
+					'endpoint_url' => 'http://first.example.test/v1',
+					'api_key'      => 'first-key',
+					'enabled'      => true,
+				],
+				[
+					'id'           => 'p_real_second',
+					'name'         => 'Real second',
+					'endpoint_url' => 'http://second.example.test/v1',
+					'api_key'      => 'second-key',
+					'enabled'      => true,
+				],
+			]
+		);
+
+		$first = get_provider_by_sdk_id( 'ai-provider-for-any-openai-compatible' );
+		$this->assertNotNull( $first );
+		$this->assertSame( 'p_real_first', $first['id'] );
+
+		$second = get_provider_by_sdk_id( 'ai-provider-for-any-openai-compatible-2' );
+		$this->assertNotNull( $second );
+		$this->assertSame( 'p_real_second', $second['id'] );
+	}
+
+	/**
+	 * REGRESSION: With provider_id set, each provider's request must hit
+	 * its own endpoint and return its own model list.
+	 *
+	 * Pre-fix behaviour: both calls returned the primary provider's models
+	 * because the param was ignored and get_primary_provider() always won.
+	 */
+	public function test_rest_list_models_routes_per_provider_id() {
+		$this->set_up_two_providers();
+
+		$req_alpha = new WP_REST_Request( 'GET' );
+		$req_alpha->set_param( 'provider_id', 'ai-provider-for-any-openai-compatible' );
+		$resp_alpha = \UltimateAiConnectorCompatibleEndpoints\rest_list_models( $req_alpha );
+
+		$req_beta = new WP_REST_Request( 'GET' );
+		$req_beta->set_param( 'provider_id', 'ai-provider-for-any-openai-compatible-2' );
+		$resp_beta = \UltimateAiConnectorCompatibleEndpoints\rest_list_models( $req_beta );
+
+		$this->assertNotInstanceOf( \WP_Error::class, $resp_alpha );
+		$this->assertNotInstanceOf( \WP_Error::class, $resp_beta );
+
+		$alpha_data = $resp_alpha->get_data();
+		$beta_data  = $resp_beta->get_data();
+
+		$alpha_ids = array_column( $alpha_data, 'id' );
+		$beta_ids  = array_column( $beta_data, 'id' );
+
+		// Each provider returns its OWN distinct model set.
+		$this->assertSame( [ 'alpha-model-1', 'alpha-model-2' ], $alpha_ids );
+		$this->assertSame( [ 'beta-only-model' ], $beta_ids );
+
+		// Each request hit its own /models URL.
+		$this->assertContains( 'http://alpha.example.test/v1/models', $this->captured_urls );
+		$this->assertContains( 'https://beta.example.test/v1/models', $this->captured_urls );
+	}
+
+	/**
+	 * The compat shim under \OpenAiCompatibleConnector\rest_list_models()
+	 * — the function the AI Agent actually calls — must honour provider_id.
+	 */
+	public function test_compat_shim_routes_per_provider_id() {
+		$this->set_up_two_providers();
+
+		$this->assertTrue( function_exists( 'OpenAiCompatibleConnector\\rest_list_models' ) );
+
+		$req = new WP_REST_Request( 'GET' );
+		$req->set_param( 'provider_id', 'ai-provider-for-any-openai-compatible-2' );
+		$resp = \OpenAiCompatibleConnector\rest_list_models( $req );
+
+		$this->assertNotInstanceOf( \WP_Error::class, $resp );
+		$this->assertSame( [ 'beta-only-model' ], array_column( $resp->get_data(), 'id' ) );
+	}
+
+	/**
+	 * Backwards-compat: when no provider_id is supplied, behaviour is
+	 * unchanged — the primary (highest-priority) provider wins.
+	 *
+	 * This protects callers that were already on the legacy contract.
+	 */
+	public function test_rest_list_models_falls_back_to_primary_when_no_provider_id() {
+		$this->set_up_two_providers();
+
+		$req  = new WP_REST_Request( 'GET' );
+		$resp = \UltimateAiConnectorCompatibleEndpoints\rest_list_models( $req );
+
+		$this->assertNotInstanceOf( \WP_Error::class, $resp );
+
+		// Alpha is registered first → primary → its models are returned.
+		$this->assertSame(
+			[ 'alpha-model-1', 'alpha-model-2' ],
+			array_column( $resp->get_data(), 'id' )
+		);
+	}
+
+	/**
+	 * Explicit endpoint_url in the request continues to take absolute precedence
+	 * over both provider_id and primary fallback.
+	 */
+	public function test_explicit_endpoint_url_overrides_provider_id() {
+		$this->set_up_two_providers();
+
+		$req = new WP_REST_Request( 'GET' );
+		$req->set_param( 'provider_id', 'ai-provider-for-any-openai-compatible' );
+		$req->set_param( 'endpoint_url', 'https://beta.example.test/v1' );
+		$resp = \UltimateAiConnectorCompatibleEndpoints\rest_list_models( $req );
+
+		$this->assertNotInstanceOf( \WP_Error::class, $resp );
+		$this->assertSame(
+			[ 'beta-only-model' ],
+			array_column( $resp->get_data(), 'id' )
+		);
+	}
+}
