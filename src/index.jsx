@@ -164,6 +164,7 @@ function ProviderCard( {
 	const [ defaultModel, setDefaultModel ] = useState( provider.default_model || '' );
 	const [ timeout, setTimeout ] = useState( provider.timeout ?? 360 );
 	const [ enabled, setEnabled ] = useState( provider.enabled ?? true );
+	const [ endpointType, setEndpointType ] = useState( provider.endpoint_type || 'generic' );
 	const modelsFetchedRef = useRef( '' );
 
 	// Sync with provider prop.
@@ -174,6 +175,7 @@ function ProviderCard( {
 		setDefaultModel( provider.default_model || '' );
 		setTimeout( provider.timeout ?? 360 );
 		setEnabled( provider.enabled ?? true );
+		setEndpointType( provider.endpoint_type || 'generic' );
 	}, [ provider ] );
 
 	const modelOptions = [
@@ -348,6 +350,33 @@ function ProviderCard( {
 									disabled={ isSaving }
 								/>
 							) }
+							<SelectControl
+								__nextHasNoMarginBottom
+								label={ __( 'Endpoint type' ) }
+								value={ endpointType }
+								options={ [
+									{
+										label: __( 'Generic (standard OpenAI-compatible)' ),
+										value: 'generic',
+									},
+									{
+										label: __( 'DeepSeek-compatible (thinking mode — adds reasoning_content)' ),
+										value: 'deepseek',
+									},
+									{
+										label: __( 'Ollama thinking-capable model (adds thinking field)' ),
+										value: 'ollama',
+									},
+								] }
+								onChange={ ( value ) => {
+									setEndpointType( value );
+									handleChange( 'endpoint_type', value );
+								} }
+								disabled={ isSaving }
+								help={ __(
+									'Choose "Generic" for standard endpoints. Select a thinking-aware type when using DeepSeek-flavoured proxies or Ollama reasoning models — this passes thought content back to the endpoint as required by those APIs.'
+								) }
+							/>
 							<NumberControl
 								__next40pxDefaultSize
 								label={ __( 'Timeout (seconds)' ) }
@@ -503,6 +532,7 @@ function CompatibleEndpointConnectorCard( { slug, label, description, logo } ) {
 			default_model: '',
 			timeout: 360,
 			enabled: true,
+			endpoint_type: 'generic',
 			_new: true, // signals ProviderCard to start expanded
 		};
 		setProviders( ( prev ) => [ ...prev, newProvider ] );

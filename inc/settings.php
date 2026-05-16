@@ -30,6 +30,7 @@ function get_default_provider_config( array $config = [] ): array {
 			'default_model' => '',
 			'timeout'      => 360,
 			'enabled'      => true,
+			'endpoint_type' => 'generic',
 		]
 	);
 }
@@ -41,6 +42,12 @@ function get_default_provider_config( array $config = [] ): array {
  * @return array Sanitized config.
  */
 function sanitize_provider_config( array $config ): array {
+	$allowed_endpoint_types = [ 'generic', 'deepseek', 'ollama' ];
+	$endpoint_type          = sanitize_text_field( $config['endpoint_type'] ?? 'generic' );
+	if ( ! in_array( $endpoint_type, $allowed_endpoint_types, true ) ) {
+		$endpoint_type = 'generic';
+	}
+
 	return [
 		'id'            => sanitize_text_field( $config['id'] ?? '' ),
 		'name'          => sanitize_text_field( $config['name'] ?? '' ),
@@ -49,6 +56,7 @@ function sanitize_provider_config( array $config ): array {
 		'default_model' => sanitize_text_field( $config['default_model'] ?? '' ),
 		'timeout'      => absint( $config['timeout'] ?? 360 ),
 		'enabled'     => (bool) ( $config['enabled'] ?? true ),
+		'endpoint_type' => $endpoint_type,
 	];
 }
 
@@ -158,6 +166,10 @@ function register_settings(): void {
 							'default_model' => [ 'type' => 'string' ],
 							'timeout'     => [ 'type' => 'integer' ],
 							'enabled'      => [ 'type' => 'boolean' ],
+							'endpoint_type' => [
+								'type' => 'string',
+								'enum' => [ 'generic', 'deepseek', 'ollama' ],
+							],
 						],
 					],
 				],
