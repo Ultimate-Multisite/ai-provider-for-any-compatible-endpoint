@@ -286,6 +286,11 @@ class ProviderFactory {
 		$sdk_provider_id = self::sdkProviderIdForIndex( $index );
 		CompatibleEndpointModel::registerEndpointUrl( $sdk_provider_id, $config['endpoint_url'] );
 
+		// Register endpoint type so CompatibleEndpointModel applies the correct
+		// thinking-mode wire format (reasoning_content / thinking / none).
+		$endpoint_type = $config['endpoint_type'] ?? 'generic';
+		CompatibleEndpointModel::registerEndpointType( $sdk_provider_id, $endpoint_type );
+
 		// Set API key authentication.
 		$api_key = $config['api_key'] ?? '';
 		if ( empty( $api_key ) ) {
