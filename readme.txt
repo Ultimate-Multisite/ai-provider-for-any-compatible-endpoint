@@ -3,7 +3,7 @@ Contributors: superdav42
 Tags: ai, connector, ollama, llm, local-ai
 Requires at least: 6.9
 Tested up to: 7.0
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 Requires PHP: 7.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -78,11 +78,13 @@ Yes, provided the Gutenberg plugin (version 23.0 or later) is active. Gutenberg 
 
 == Changelog ==
 
-= 2.0.1 =
+= 2.1.0 - Released on 2026-05-15 =
 
-* Improved: Lowered minimum WordPress requirement to 6.9 to match the upstream `ai-provider-for-openai` pattern. The plugin loads safely as a no-op until the AI Client SDK becomes available (via WordPress 7.0+ core or a sibling plugin that bundles `wordpress/php-ai-client`, e.g. Superdav AI Agent).
-* Fix: Defer SDK-dependent class loading to `plugins_loaded:5` so SDKs registered by alphabetically-later plugins (e.g. Superdav AI Agent on WP 6.9) are detected. Previously the SDK guard ran at file-include time, before later plugins had a chance to register their autoloader.
-* Fix: Multi-provider model listing now correctly returns each provider's own models. Previously the REST `/models` callback (and the `OpenAiCompatibleConnector\rest_list_models()` compatibility shim used by the AI Agent) always fell back to the primary provider's endpoint, so every OpenAI-compatible provider in a multi-provider setup showed the same model list. Callers can now pass a `provider_id` request param (the SDK provider ID, e.g. `ai-provider-for-any-openai-compatible-2`) to resolve the correct per-provider endpoint and API key. Note: the AI Agent plugin must also be updated to pass this param — without that companion change, the agent will still see the primary provider's models.
+* New: Provider preset picker — a searchable combobox below the Endpoint URL field lists ~110 known OpenAI-compatible AI providers (Ollama, LM Studio, OpenRouter, Groq, Together, Fireworks, DeepSeek, Mistral, xAI, Cerebras, Cohere, Perplexity, OpenAI, Gemini via OpenAI-compat, and many more). Selecting a preset fills the Endpoint URL automatically and sets the Name field when blank, dramatically reducing setup friction.
+* Improved: Lowered minimum WordPress requirement to 6.9 (with the Gutenberg plugin 23.0+ providing the AI Client SDK). The plugin loads safely as a no-op until the SDK becomes available — via WordPress 7.0+ core or any sibling plugin that bundles `wordpress/php-ai-client`.
+* Fix: Connectors settings page now shows a single canonical card for this plugin instead of one auto-discovered card per registered SDK provider, restoring the intended multi-provider management UI.
+* Fix: Multi-provider model listing now returns each provider's own models. Previously every OpenAI-compatible provider in a multi-provider setup showed the same list (the primary provider's). Callers can pass a `provider_id` request param to resolve the correct per-provider endpoint and API key, and the SDK model-directory cache key is now scoped per endpoint URL so cached model lists no longer collide across providers.
+* Fix: Defer SDK-dependent class loading to `plugins_loaded:5` so SDKs registered by alphabetically-later plugins (e.g. companion AI agent plugins on WP 6.9) are detected. Previously the SDK guard ran at file-include time, before later plugins had a chance to register their autoloader.
 
 = 2.0.0 - Released on 2026-04-24 =
 
